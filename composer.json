@@ -1,2 +1,22 @@
 {
+  "name": "gearshifters/checkride-server",
+  "keywords": [
+    "bike"
+  ],
+  "authors": [
+    {
+      "name": "Maël NOUVEL",
+      "email": "maelnouvel@duck.com"
+    },
+    {
+      "name": "Thomas HERVEUX"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "vlucas/phpdotenv": "^v5.6",
+    "ext-mysqli": "*"
+  }
 }
