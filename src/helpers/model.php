@@ -54,7 +54,7 @@ function getAll(string $table): array {
  *
  * @return int|void
  */
-function save(string $table,array $data = array()) {
+function save(string $table, array $data = array()) {
     $values = array();
     global $linkConnectDB;
 
@@ -72,9 +72,7 @@ function save(string $table,array $data = array()) {
     }
 
     mysqli_query($linkConnectDB, $sql) or die(mysqli_error($linkConnectDB));
-    $id = ($id > 0) ? $id : mysqli_insert_id($linkConnectDB);
-
-    return $id;
+    return ($id > 0) ? $id : mysqli_insert_id($linkConnectDB);
 }
 
 /**

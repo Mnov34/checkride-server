@@ -2,6 +2,8 @@
 
 namespace App\models;
 
+require './src/helpers/model.php';
+
 use PDO;
 
 class Bike {
