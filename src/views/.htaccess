@@ -1,0 +1,3 @@
+#Empêche de montrer un index des fichiers/dossier présent dans ce dossier
+#Envoie un status 403 (forbidden) a la place
+Options -Indexes
