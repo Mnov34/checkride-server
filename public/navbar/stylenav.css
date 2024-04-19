@@ -4,6 +4,7 @@ body {
     align-items: flex-start;
     min-height: 100vh;
     padding-top: 50px;
+    font-family: 'Poppins', sans-serif;
     background-image: url("/public/img/fondsite2.jpg");
     background-size: cover;
     background-repeat: no-repeat;
