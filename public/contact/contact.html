@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckRide</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="shortcut icon" href="img/faviconmoto.png" type="image/png">
+</head>
+<body>
+<header>
+        <nav>
+            <a href="index.html">About</a>
+            <a href="bikes.html">Bikes</a>
+            <a href="contact.html">Contact</a>
+            <span></span>
+        </nav>
+</header>
+
+<main>
+    <section id="contacts" class="contact">
+        <div class="container d-flex">
+            <div class="section-header">
+                <h2 class="section__tittle">Contact</h2>
+                <p>Need help, more information or just to chat? Use our form to contact us!</p>
+            </div>
+        </div>
+        <form action="https://formsubmit.co/thomas.herveux@gmail.com " method="POST" class="form">
+            <label for="firstname">
+                <input type="text" name="firstname" id="firstname" placeholder="Prénom">
+            </label>
+            <label for="lastname">
+                <input type="text" name="lastname" id="lastname" placeholder="Nom">
+            </label>
+            <label for="email">
+                <input type="email" name="email" id="email" placeholder="Email">
+            </label>
+            <textarea name="message" id="message" placeholder="Message"></textarea>
+            <input type="submit" class="btn" value="Envoyer">
+        </form>
+    </section>
+<footer>
+
+</footer>
+    <script src="script.js"></script>
+</body>
+</main>
+
+</html>
