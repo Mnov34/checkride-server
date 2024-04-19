@@ -75,7 +75,9 @@ class Database {
      *
      * @return mixed
      */
-    public function execute() { return $this->stmt->execute(); }
+    public function execute() {
+        return $this->stmt->execute();
+    }
 
     /**
      * Recupère le resultat en array
@@ -98,5 +100,7 @@ class Database {
     }
 
     // Get row count
-    public function rowCount() { return $this->stmt->rowCount(); }
+    public function rowCount() {
+        return $this->stmt->rowCount();
+    }
 }

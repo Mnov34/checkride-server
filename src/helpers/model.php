@@ -54,7 +54,7 @@ function getAll(string $table): array {
  *
  * @return int|void
  */
-function save(string $table,array $data = array()) {
+function save(string $table, array $data = array()) {
     $values = array();
     global $linkConnectDB;
 

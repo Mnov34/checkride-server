@@ -1,7 +1,6 @@
 <?php
-namespace App\models;
 
-use app\models\Database;
+namespace App\models;
 
 // TODO: add real values in sql functions
 class Bike {
@@ -21,7 +20,7 @@ class Bike {
         return $this->db->query("");
     }
 
-    public function getAllBikes() : array {
+    public function getAllBikes(): array {
         $this->db->query("SELECT * FROM bikes");
         return $this->db->resultSet();
     }
