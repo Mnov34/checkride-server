@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace App\models;
 
 use PDO;
 
@@ -71,15 +71,6 @@ class Database {
     }
 
     /**
-     * Execute une requête sql
-     *
-     * @return mixed
-     */
-    public function execute() {
-        return $this->stmt->execute();
-    }
-
-    /**
      * Recupère le resultat en array
      *
      * @return mixed
@@ -87,6 +78,15 @@ class Database {
     public function resultSet() {
         $this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
+     * Execute une requête sql
+     *
+     * @return mixed
+     */
+    public function execute() {
+        return $this->stmt->execute();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\controllers;
+namespace app\controllers\bike;
 
 use App\models\Bike;
 
