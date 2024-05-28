@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
         body {
-            position: relative; /* Add position relative here if body is to be the reference container */
+            position: relative;
             height: 100vh;
             font-family: Arial, sans-serif;
             display: flex;
@@ -40,16 +41,21 @@
             align-items: center;
         }
 
-        .success, .error {
+        .success,
+        .error {
             text-align: center;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
-            padding: 20px;
+            padding: 10px;
+            /* reduced padding */
             margin-top: 20px;
-            font-size: 1em;
-            width: 80%;
+            font-size: 0.9em;
+            /* reduced font size */
+            width: 60%;
+            /* reduced width */
             color: white;
-            margin: 20px auto;
+            margin: 10px auto;
+            /* reduced margin */
         }
 
         p {
@@ -106,45 +112,62 @@
             border-radius: 10px;
             border-left: 1px solid rgba(255, 255, 255, 0.3);
             border-top: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 10px 10px 60px -8px rgba(0,0,0,0.2);
+            box-shadow: 10px 10px 60px -8px rgba(0, 0, 0, 0.2);
             position: absolute;
             transition: all 0.2s ease;
         }
 
         .drop-1 {
-            height: 80px; width: 80px;
-            top: -20px; left: -40px;
+            height: 80px;
+            width: 80px;
+            top: -20px;
+            left: -40px;
             z-index: -1;
         }
 
         .drop-2 {
-            height: 80px; width: 80px;
-            bottom: -40px; right: -40px;
+            height: 80px;
+            width: 80px;
+            bottom: -40px;
+            right: -40px;
         }
 
         .drop-3 {
-            height: 100px; width: 100px;
-            bottom: -40px; left: -40px;
+            height: 100px;
+            width: 100px;
+            bottom: -40px;
+            left: -40px;
             z-index: -1;
         }
 
         .drop-4 {
-            height: 120px; width: 120px;
-            top: -60px; right: -60px;
+            height: 120px;
+            width: 120px;
+            top: -60px;
+            right: -60px;
         }
     </style>
+    <script>
+        function validatePassword() {
+            var password = document.getElementsByName("CR_password")[0].value;
+            var confirmPassword = document.getElementsByName("confirm_password")[0].value;
+            if (password != confirmPassword) {
+                alert("Les mots de passe ne correspondent pas.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
+
 <body>
 <div class="container">
-    <form action="" method="post">
+    <form action="" method="post" onsubmit="return validatePassword();">
         <h2>Inscription</h2>
         <input type="text" name="CR_user" placeholder="Nom d'utilisateur" required />
         <input type="password" name="CR_password" placeholder="Mot de passe" required />
+        <input type="password" name="confirm_password" placeholder="Confirmez le mot de passe" required />
         <input type="email" name="email" placeholder="Email" required />
-        <input type="text" name="firstname" placeholder="Prénom" required />
-        <input type="text" name="lastname" placeholder="Nom de famille" required />
-        <input type="number" name="nb_motorcycle" placeholder="Nombre de motos" required />
-        <input type="text" name="phone" placeholder="Téléphone" required />
         <input type="submit" name="submit" value="S'inscrire" />
     </form>
     <div class="drop drop-1"></div>
@@ -158,48 +181,36 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $CR_user = htmlspecialchars($_POST['CR_user']);
         $CR_password = htmlspecialchars($_POST['CR_password']);
+        $confirm_password = htmlspecialchars($_POST['confirm_password']);
         $email = htmlspecialchars($_POST['email']);
-        $firstname = htmlspecialchars($_POST['firstname']);
-        $lastname = htmlspecialchars($_POST['lastname']);
-        $nb_motorcycle = htmlspecialchars($_POST['nb_motorcycle']);
-        $phone = htmlspecialchars($_POST['phone']);
 
-        try {
-            $conn->beginTransaction();
-            // Assigner le statut 'user' par défaut à chaque nouvel utilisateur
-            $statut = 'user';
+        if ($CR_password !== $confirm_password) {
+            echo "<div class='error'><h3>Les mots de passe ne correspondent pas.</h3></div>";
+        } else {
+            try {
+                $conn->beginTransaction();
+                $statut = 'user';
 
-            // Préparer et exécuter l'insertion dans la table checkride_user
-            $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, statut) VALUES (:CR_user, :CR_password, :email, :statut)";
-            $stmt1 = $conn->prepare($query1);
-            $stmt1->execute([
-                ':CR_user' => $CR_user,
-                ':CR_password' => hash('sha256', $CR_password),
-                ':email' => $email,
-                ':statut' => $statut
-            ]);
-            $id_checkride_user = $conn->lastInsertId(); // Récupération du dernier ID inséré
+                $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, statut) VALUES (:CR_user, :CR_password, :email, :statut)";
+                $stmt1 = $conn->prepare($query1);
+                $stmt1->execute([
+                    ':CR_user' => $CR_user,
+                    ':CR_password' => hash('sha256', $CR_password),
+                    ':email' => $email,
+                    ':statut' => $statut
+                ]);
+                $id_checkride_user = $conn->lastInsertId();
 
-            // Préparer et exécuter l'insertion dans la table owner
-            $query2 = "INSERT INTO owner (firstname, lastname, nb_motorcycle, username, phone, Id_checkride_user) VALUES (:firstname, :lastname, :nb_motorcycle, :username, :phone, :Id_checkride_user)";
-            $stmt2 = $conn->prepare($query2);
-            $stmt2->execute([
-                ':firstname' => $firstname,
-                ':lastname' => $lastname,
-                ':nb_motorcycle' => $nb_motorcycle,
-                ':username' => $CR_user,
-                ':phone' => $phone,
-                ':Id_checkride_user' => $id_checkride_user
-            ]);
-
-            $conn->commit();
-            echo "<div class='success'><h3>Vous êtes inscrit avec succès.</h3><p>Cliquez ici pour vous <a href='login.php'>connecter</a></p></div>";
-        } catch (PDOException $e) {
-            $conn->rollBack();
-            echo "<div class='error'><h3>Erreur lors de l'inscription : " . $e->getMessage() . "</h3></div>";
+                $conn->commit();
+                echo "<div class='success'><h3>Vous êtes inscrit avec succès.</h3><p>Cliquez ici pour vous <a href='login.php'>connecter</a></p></div>";
+            } catch (PDOException $e) {
+                $conn->rollBack();
+                echo "<div class='error'><h3>Erreur lors de l'inscription : " . $e->getMessage() . "</h3></div>";
+            }
         }
     }
     ?>
 </div>
 </body>
+
 </html>
