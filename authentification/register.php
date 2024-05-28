@@ -13,13 +13,21 @@
             background: linear-gradient(to top right, #482673 0%, #2b5876 100%);
             color: white;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .container {
             position: relative;
+            z-index: 1;
         }
 
         .container.exception {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            /* Appliquer un z-index plus élevé */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,7 +37,7 @@
 
         form {
             background: rgba(255, 255, 255, 0.3);
-            padding: 3rem;
+            padding: 2rem;
             border-radius: 20px;
             border-left: 1px solid rgba(255, 255, 255, 0.3);
             border-top: 1px solid rgba(255, 255, 255, 0.3);
@@ -47,25 +55,20 @@
             background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
             padding: 10px;
-            /* reduced padding */
             margin-top: 20px;
             font-size: 0.9em;
-            /* reduced font size */
             width: 60%;
-            /* reduced width */
             color: white;
             margin: 10px auto;
-            /* reduced margin */
         }
 
         p {
             color: white;
             font-weight: 500;
             opacity: .7;
-            font-size: 1.4rem;
-            margin-bottom: 60px;
+            margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
-            font-size: 2em;
+            font-size: 1em;
         }
 
         a {
@@ -157,6 +160,12 @@
             }
             return true;
         }
+
+        function redirectAfterDelay() {
+            setTimeout(function() {
+                window.location.href = "register.php";
+            }, 2000);
+        }
     </script>
 </head>
 
@@ -164,18 +173,19 @@
 <div class="container">
     <form action="" method="post" onsubmit="return validatePassword();">
         <h2>Inscription</h2>
-        <input type="text" name="CR_user" placeholder="Nom d'utilisateur" required />
-        <input type="password" name="CR_password" placeholder="Mot de passe" required />
-        <input type="password" name="confirm_password" placeholder="Confirmez le mot de passe" required />
+        <input type="text" name="CR_user" placeholder="User" required />
+        <input type="password" name="CR_password" placeholder="Password" required />
+        <input type="password" name="confirm_password" placeholder="Confirm password" required />
         <input type="email" name="email" placeholder="Email" required />
-        <input type="submit" name="submit" value="S'inscrire" />
+        <input type="submit" name="submit" value="Register" />
+        <p>If you already have an account,<br> <a href="login.php">click here to log in</a>.</p>
     </form>
     <div class="drop drop-1"></div>
     <div class="drop drop-2"></div>
     <div class="drop drop-3"></div>
     <div class="drop drop-4"></div>
 </div>
-<div class="container exception">
+<div class="container exception" id="messageContainer">
     <?php
     require('config.php');
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
@@ -185,7 +195,8 @@
         $email = htmlspecialchars($_POST['email']);
 
         if ($CR_password !== $confirm_password) {
-            echo "<div class='error'><h3>Les mots de passe ne correspondent pas.</h3></div>";
+            echo "<div class='error'><h3>The passwords don’t match.</h3></div>";
+            echo "<script>redirectAfterDelay();</script>";
         } else {
             try {
                 $conn->beginTransaction();
@@ -202,10 +213,12 @@
                 $id_checkride_user = $conn->lastInsertId();
 
                 $conn->commit();
-                echo "<div class='success'><h3>Vous êtes inscrit avec succès.</h3><p>Cliquez ici pour vous <a href='login.php'>connecter</a></p></div>";
+                echo "<div class='success'><h3>you have successfully registered.</h3></div>";
+                echo "<script>redirectAfterDelay();</script>";
             } catch (PDOException $e) {
                 $conn->rollBack();
-                echo "<div class='error'><h3>Erreur lors de l'inscription : " . $e->getMessage() . "</h3></div>";
+                echo "<div class='error'><h3>Error while registering: " . $e->getMessage() . "</h3></div>";
+                echo "<script>redirectAfterDelay();</script>";
             }
         }
     }
