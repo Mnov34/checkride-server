@@ -1,6 +1,14 @@
 <?php
 // App Root
 define('APPROOT', dirname(__FILE__, 2));
+
+// Database settings
+define("DB_HOST", $_ENV['DB_HOST'] ?? 'localhost');
+define("DB_PORT", $_ENV['DB_PORT'] ?? '3306');
+define("DB_USER", $_ENV['DB_USER'] ?? 'root');
+define("DB_PASS", $_ENV['DB_PASS'] ?? 'root');
+define("DB_NAME", $_ENV['DB_NAME'] ?? 'checkride');
+
 // URL Root
 const URLROOT = 'http://localhost/checkride';
 // Site Name

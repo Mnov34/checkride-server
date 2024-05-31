@@ -1,10 +1,8 @@
 <?php
 
-use App\router\Router;
-
 // Routes vers les pages statiques
 // phpdoc variable definition
-/** @var Router $router */
+/** @var \src\app\router\Router $router */
 $router->addRoute('', ['controller' => 'Index', 'action' => 'home']);
 $router->addRoute('about', ['controller' => 'Index', 'action' => 'about']);
 

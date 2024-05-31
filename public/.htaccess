@@ -8,7 +8,7 @@
 	RewriteCond %{REQUEST_FILENAME} !-d
     #Check si le FICHIER demandé existe sur le server
 	RewriteCond %{REQUEST_FILENAME} !-f
-	#Redirige toutes les requêtes pour des fichiers/dossiers qui n'existe pas vers index.php,
+	#Redirige toutes les requêtes pour des fichiers/dossiers qui n'existe pas vers home.php,
 	#en utilistant les paramètres utilisé en tant que paramètre de quesry
 	#[QSA] = Query String Append
 	RewriteRule	 ^(.+)$ index.php?url=$1 [QSA,L]

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\models;
+namespace src\app\models;
 
 use PDO;
+use PDOException;
 
 /**
  * PDO Database Class
@@ -18,9 +19,9 @@ class Database {
     private string $pass = DB_PASS;
     private string $name = DB_NAME;
 
-    private $db_handler;
-    private $stmt;
-    private $error;
+    private PDO $db_handler;
+    private string $error;
+    private string $stmt;
 
     /**
      * Initialize une nouvelle connection a la base de donnée

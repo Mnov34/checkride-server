@@ -1,8 +1,9 @@
 <?php
 
-namespace App\models;
+namespace src\app\models;
 
 // TODO: add real values in sql functions
+
 class Bike {
     private $db;
 

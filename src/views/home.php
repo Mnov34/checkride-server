@@ -1,26 +1,14 @@
 <?php
-// Paramètres de connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "checkride";
-
-// Créer une connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérifier la connexion
-if ($conn -> connect_error) {
-    die("Connection failed: " . $conn -> connect_error);
-}
-
+$db = new \src\app\models\Database();
 // Requête SQL pour récupérer les données pour le graphique
 $sqlGraph = "SELECT date_kilometer, kilometer FROM kilometers WHERE Id_motorcycle = 1 ORDER BY date_kilometer";
-$resultGraph = $conn->query($sqlGraph);
+$resultGraph = $this->db->Query($sqlGraph);
+//$resultGraph = $conn->query($sqlGraph);
 
 // Préparation des données pour le graphique
 $data = [];
 if ($resultGraph->num_rows > 0) {
-    while($row = $resultGraph->fetch_assoc()) {
+    while ($row = $resultGraph->fetch_assoc()) {
         $data[] = [date('Y-m-d', strtotime($row["date_kilometer"])), (int)$row["kilometer"]];
     }
 } else {
@@ -41,7 +29,7 @@ $resultTable = $conn->query($sqlTable);
 // Préparation des données pour le tableau
 $tableRows = '';
 if ($resultTable->num_rows > 0) {
-    while($row = $resultTable->fetch_assoc()) {
+    while ($row = $resultTable->fetch_assoc()) {
         $tableRows .= "<tr>
                     <td>{$row['brand']}</td>
                     <td>{$row['model']}</td>
@@ -66,7 +54,7 @@ $conn->close();
     <link rel="shortcut icon" href="/img/faviconmoto.png" type="image/png">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
+        google.charts.load('current', {'packages': ['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
@@ -78,7 +66,7 @@ $conn->close();
             var options = {
                 title: 'Kilométrage',
                 curveType: 'function',
-                legend: { position: 'none' }
+                legend: {position: 'none'}
             };
 
             var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
@@ -91,6 +79,7 @@ $conn->close();
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             display: flex;
             flex-direction: column; /* Organize content in a vertical layout */
@@ -211,7 +200,7 @@ $conn->close();
 <body>
 <header>
     <nav>
-        <a href="accueil.php">About</a>
+        <a href="home.php">About</a>
         <a href="bikes.php">Bikes</a>
         <a href="contact.php">Contact</a>
         <span></span>

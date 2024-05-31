@@ -22,9 +22,11 @@
     }
   ],
   "autoload": {
+    "psr-4": {
+      "src\\": "src/"
+    },
     "files": [
-      "config/constants.php",
-      "config/dbcreds.php"
+      "config/constants.php"
     ],
     "classmap": [
       "src/"
@@ -36,6 +38,9 @@
     "ext-pdo": "*",
     "ext-json": "*",
     "vlucas/phpdotenv": "^v5.6"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
   },
   "support": {
     "issues": "https://github.com/Azalphal/checkride-server/issues"
