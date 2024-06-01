@@ -15,17 +15,18 @@
 
         body {
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start; /* Align content from the top */
+            flex-direction: column; /* Organize content in a vertical layout */
             align-items: center; /* Center content horizontally */
-            min-height: 100vh;
+            height: 100vh;
+            margin: 0;
             padding-top: 50px;
             font-family: 'Poppins', sans-serif;
-            background-image: url("fondsite2.jpg");
+            background-image: url("../img/fondsite2.jpg");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: right center;
             background-attachment: fixed;
+            overflow: hidden;
         }
 
         header {

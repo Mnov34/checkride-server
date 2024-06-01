@@ -16,17 +16,49 @@ INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, acquisition_da
     ('Moto Guzzi', 'V85 TT', '853cc', '2019-08-01', 'AJ-672-FS', '2021-09-01', 1),
     ('Harley Davidson', 'Iron 883', '883cc', '2018-04-01', 'VC-185-KY', '2021-10-20', 2);
 
-INSERT INTO maintenance (maintenance_kilometer, parts, bills, maintenance_date, Id_motorcycle) VALUES
-   (500, 'Oil change', 'Bill001', '2022-01-10', 1),
-   (1000, 'Tire replacement', 'Bill002', '2022-03-15', 1),
-   (1500, 'Brake pads', 'Bill003', '2022-05-20', 1),
-   (2000, 'Battery replacement', 'Bill004', '2022-07-25', 1),
-   (2500, 'Chain and sprockets', 'Bill005', '2022-09-30', 1),
-   (3000, 'Spark plug replacement', 'Bill006', '2022-11-05', 1),
-   (3500, 'Air filter', 'Bill007', '2023-01-09', 1),
-   (4000, 'Oil and filter change', 'Bill008', '2023-03-14', 1),
-   (4500, 'Coolant flush', 'Bill009', '2023-05-19', 1),
-   (5000, 'General inspection', 'Bill010', '2023-07-24', 1);
+INSERT INTO maintenance (maintenance_kilometer, parts, bills, maintenance_date, Id_motorcycle)
+VALUES
+    (500, 'Engine oil', 'Invoice_001.pdf', '2024-01-15', 1),
+    (2000, 'Air filter', 'Invoice_002.pdf', '2024-03-10', 1),
+    (5000, 'Front tires', 'Invoice_003.pdf', '2024-06-20', 1),
+    (7500, 'Brake pads', 'Invoice_004.pdf', '2024-09-15', 1),
+    (10000, 'Engine oil', 'Invoice_005.pdf', '2024-12-01', 1),
+
+    (500, 'Engine oil', 'Invoice_006.pdf', '2024-01-20', 2),
+    (1500, 'Oil filter', 'Invoice_007.pdf', '2024-02-25', 2),
+    (4000, 'Chain', 'Invoice_008.pdf', '2024-05-30', 2),
+    (7000, 'Air filter', 'Invoice_009.pdf', '2024-08-25', 2),
+    (10000, 'Engine oil', 'Invoice_010.pdf', '2024-11-20', 2),
+
+    (1000, 'Engine oil', 'Invoice_011.pdf', '2024-02-05', 3),
+    (3000, 'Oil filter', 'Invoice_012.pdf', '2024-04-15', 3),
+    (5000, 'Rear tires', 'Invoice_013.pdf', '2024-06-25', 3),
+    (8000, 'Brake pads', 'Invoice_014.pdf', '2024-09-30', 3),
+    (10000, 'Engine oil', 'Invoice_015.pdf', '2024-11-30', 3),
+
+    (500, 'Engine oil', 'Invoice_016.pdf', '2024-01-10', 4),
+    (2500, 'Air filter', 'Invoice_017.pdf', '2024-03-05', 4),
+    (5000, 'Front tires', 'Invoice_018.pdf', '2024-05-10', 4),
+    (7500, 'Brake pads', 'Invoice_019.pdf', '2024-07-20', 4),
+    (10000, 'Engine oil', 'Invoice_020.pdf', '2024-09-25', 4),
+    (12500, 'Chain', 'Invoice_021.pdf', '2024-11-30', 4),
+    (15000, 'Rear tires', 'Invoice_022.pdf', '2025-02-05', 4),
+
+    (1000, 'Engine oil', 'Invoice_023.pdf', '2024-01-15', 5),
+    (3000, 'Oil filter', 'Invoice_024.pdf', '2024-03-10', 5),
+    (6000, 'Air filter', 'Invoice_025.pdf', '2024-05-15', 5),
+    (9000, 'Front tires', 'Invoice_026.pdf', '2024-07-20', 5),
+    (12000, 'Brake pads', 'Invoice_027.pdf', '2024-10-10', 5),
+    (15000, 'Engine oil', 'Invoice_028.pdf', '2025-01-05', 5),
+
+    (1500, 'Engine oil', 'Invoice_029.pdf', '2024-02-01', 6),
+    (4000, 'Oil filter', 'Invoice_030.pdf', '2024-04-15', 6),
+    (7000, 'Rear tires', 'Invoice_031.pdf', '2024-06-30', 6),
+    (10000, 'Chain', 'Invoice_032.pdf', '2024-09-10', 6),
+    (13000, 'Brake pads', 'Invoice_033.pdf', '2024-11-20', 6),
+    (15000, 'Engine oil', 'Invoice_034.pdf', '2025-02-28', 6);
+
+
 
 INSERT INTO kilometers (date_kilometer, kilometer, Id_motorcycle) VALUES
   ('2024-01-01', 1000, 1),

@@ -1,34 +1,43 @@
 <?php
-// Paramètres de connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "checkride";
+$host = 'localhost'; // ou localhost
+$dbname = 'checkride';
+$user = 'root';
+$password = '';
+$charset = 'utf8mb4';
 
-// Créer une connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
+$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES => false,
+];
 
-// Vérifier la connexion
-if ($conn -> connect_error) {
-    die("Connection failed: " . $conn -> connect_error);
+try {
+    $conn = new PDO($dsn, $user, $password, $options);
+} catch (\PDOException $e) {
+    throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
 // Requête SQL pour récupérer les données pour le graphique
-$sqlGraph = "SELECT date_kilometer, kilometer FROM kilometers WHERE Id_motorcycle = 1 ORDER BY date_kilometer";
-$resultGraph = $conn->query($sqlGraph);
+// Préparation de la requête pour le graphique
+$sqlGraph = "SELECT date_kilometer, kilometer FROM kilometers WHERE Id_motorcycle = ? ORDER BY date_kilometer";
+$stmtGraph = $conn->prepare($sqlGraph);
+$stmtGraph->execute([1]); // Assurez-vous que cette valeur est dynamique si nécessaire
 
 // Préparation des données pour le graphique
 $data = [];
-if ($resultGraph->num_rows > 0) {
-    while($row = $resultGraph->fetch_assoc()) {
+if ($stmtGraph->rowCount() > 0) {
+    while ($row = $stmtGraph->fetch(PDO::FETCH_ASSOC)) {
         $data[] = [date('Y-m-d', strtotime($row["date_kilometer"])), (int)$row["kilometer"]];
     }
 } else {
     echo "0 results";
 }
 
+
 // Requête SQL pour récupérer les données pour le tableau
-$sqlTable = "SELECT m.brand, m.model, YEAR(m.prod_year) AS year, m.plate, k.kilometer, k.date_kilometer AS date, 'Maintenance placeholder' AS maintenance
+// Préparation de la requête pour le tableau
+$sqlTable = "SELECT m.brand, m.model, YEAR(m.prod_year) AS year, m.plate, k.kilometer, k.date_kilometer AS date
              FROM motorcycle m
              JOIN kilometers k ON m.Id_motorcycle = k.Id_motorcycle
              WHERE k.date_kilometer = (
@@ -36,12 +45,13 @@ $sqlTable = "SELECT m.brand, m.model, YEAR(m.prod_year) AS year, m.plate, k.kilo
                  FROM kilometers k2
                  WHERE k2.Id_motorcycle = m.Id_motorcycle
              )";
-$resultTable = $conn->query($sqlTable);
+$stmtTable = $conn->prepare($sqlTable);
+$stmtTable->execute();
 
 // Préparation des données pour le tableau
 $tableRows = '';
-if ($resultTable->num_rows > 0) {
-    while($row = $resultTable->fetch_assoc()) {
+if ($stmtTable->rowCount() > 0) {
+    while ($row = $stmtTable->fetch(PDO::FETCH_ASSOC)) {
         $tableRows .= "<tr>
                     <td>{$row['brand']}</td>
                     <td>{$row['model']}</td>
@@ -52,9 +62,9 @@ if ($resultTable->num_rows > 0) {
                   </tr>";
     }
 } else {
-    $tableRows .= "<tr><td colspan='7'>No results found</td></tr>";
+    $tableRows .= "<tr><td colspan='6'>No results found</td></tr>";
 }
-$conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -99,11 +109,12 @@ $conn->close();
             margin: 0;
             padding-top: 50px;
             font-family: 'Poppins', sans-serif;
-            background-image: url("fondsite2.jpg");
+            background-image: url("../img/fondsite2.jpg");
             background-size: cover;
             background-repeat: no-repeat;
-            background-position: right center; /* Adjusted for aesthetic preference */
+            background-position: right center;
             background-attachment: fixed;
+            overflow: hidden;
         }
 
         header {
@@ -163,15 +174,17 @@ $conn->close();
             left: 180px;
         }
 
-        #main-container {
+        .main-container {
             width: 100%;
             align-self: flex-start; /* Align container to the start of the main axis */
             padding-left: 40px; /* Add some padding for aesthetic */
             margin-top: auto; /* Pushes the container to the bottom */
             margin-bottom: 30px;
+            margin-left: 150px;
+
         }
 
-        #curve_chart, .container {
+        .curve_chart, .container {
             width: 900px;
             background: rgba(255, 255, 255, .3);
             padding: 2rem;
@@ -211,14 +224,14 @@ $conn->close();
 <body>
 <header>
     <nav>
-        <a href="accueil.php">About</a>
-        <a href="bikes.php">Bikes</a>
-        <a href="contact.php">Contact</a>
+        <a href="#">Home</a>
+        <a href="#">Bikes</a>
+        <a href="#">Contact</a>
         <span></span>
     </nav>
 </header>
-<div id="main-container">
-    <div id="curve_chart" style="height: 500px;"></div>
+<div class="main-container">
+    <div class="curve_chart" id="curve_chart" style="height: 500px;"></div>
     <div class="container">
         <table>
             <thead>
