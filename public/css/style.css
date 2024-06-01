@@ -20,7 +20,6 @@ body {
 }
 
 header {
-    width: 100%;
     display: flex;
     justify-content: center;
     position: relative;
@@ -77,25 +76,19 @@ nav a:nth-child(3):hover ~ span {
 }
 
 .main-container {
-    width: 100%;
     align-self: flex-start;
     padding-left: 40px;
-    margin-top: auto;
     margin-bottom: 30px;
-    margin-left: 150px;
-
+    margin-left: 100px;
 }
 
 .curve_chart, .container {
-    max-width: 900px;
+    width: 100%;
     background: rgba(255, 255, 255, .3);
     padding: 2rem;
     margin-top: 50px;
     border-radius: 20px;
-    backdrop-filter: blur(10px);
     box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, .2);
-    text-align: center;
-    color: white;
 }
 
 table {
@@ -123,7 +116,7 @@ tr:nth-child(odd) {
 form {
     background: rgba(255, 255, 255, .3);
     padding: 3rem;
-    height: 370px;
+    height: 100%;
     border-radius: 20px;
     border-left: 1px solid rgba(255, 255, 255, .3);
     border-top: 1px solid rgba(255, 255, 255, .3);
@@ -131,17 +124,28 @@ form {
     box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, .2);
     text-align: center;
 }
+.section__tittle{
+    text-align: center;
+}
+
+form li{
+    display: inline-block;
+    margin-right: 20px;
+}
+form ul {
+    list-style-type: none; /* Supprime les puces de la liste */
+    padding: 0; /* Supprime le padding par défaut de la liste */
+}
 
 .form-container {
-    width: 900px;
+    width: 100%;
     background: rgba(255, 255, 255, .3);
     padding: 2rem;
     margin-top: 50px;
     border-radius: 20px;
-    backdrop-filter: blur(10px);
     box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, .2);
     text-align: center;
-    color: white;
+    color: black;
 }
 
 .form-container h2 {
@@ -150,19 +154,19 @@ form {
 
 .form-container input, .form-container button {
     display: block;
-    width: calc(50% - 20px);
+    width: 100%;
     margin: 10px auto;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.36);
     border: none;
     border-radius: 10px;
-    color: white;
+    color: black;
     text-align: center;
 }
 
 .form-container button {
-    width: 100px;
-    background: #00000080;
+    width:50%;
+    background: rgba(0, 0, 0, 0.45);
     cursor: pointer;
     transition: .3s;
 }
@@ -200,7 +204,7 @@ input {
     border-left: 1px solid rgba(255, 255, 255, .3);
     border-top: 1px solid rgba(255, 255, 255, .3);
     padding: 1rem;
-    width: 200px;
+    width: 100%;
     border-radius: 50px;
     backdrop-filter: blur(5px);
     box-shadow: 4px 4px 60px rgba(0, 0, 0, .2);
@@ -231,7 +235,6 @@ input[type="button"] {
 
 /*Formulaire*/
 #contacts {
-    /*background-color: #f4f4f4; */
     padding: 40px;
 }
 

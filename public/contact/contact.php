@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheckRide</title>
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="shortcut icon" href="../public/img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
 </head>
 <body>
 <header>
@@ -18,10 +18,8 @@
 </header>
 <div id="contacts" class="contact">
     <div class="container">
-        <div class="section-header">
             <h2 class="section__tittle">CONTACT US ! </h2>
             <p>Need help, more information or just to chat ? Use our form to contact us !</p>
-        </div>
         <form action="https://formsubmit.co/boitemailenvoiephpmailer@gmail.com " method="POST" class="form">
             <label for="firstname">
                 <input type="text" name="firstname" id="firstname" placeholder="Firstname">
@@ -32,7 +30,7 @@
             <label for="email">
                 <input type="email" name="email" id="email" placeholder="Email">
             </label>
-            <textarea name="message" id="message" placeholder="Message"></textarea>
+            <label for="message"></label><textarea name="message" id="message" placeholder="Message"></textarea>
             <input type="submit" class="btn" value="Send">
         </form>
     </div>

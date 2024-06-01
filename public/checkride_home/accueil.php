@@ -73,7 +73,7 @@ if ($stmtTable->rowCount() > 0) {
     <meta charset="UTF-8">
     <title>Home</title>
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="shortcut icon" href="/img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
@@ -107,7 +107,7 @@ if ($stmtTable->rowCount() > 0) {
 </header>
 
 <div class="main-container">
-    <div class="curve_chart" id="curve_chart" style="height: 500px;"></div>
+    <div class="curve_chart" id="curve_chart"></div>
     <div class="container">
         <table>
             <thead>

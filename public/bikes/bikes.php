@@ -65,6 +65,7 @@ if (count($resultTable) > 0) {
     <meta charset="UTF-8">
     <title>Motorcycle</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
 </head>
 <body>
 <header>
@@ -80,12 +81,20 @@ if (count($resultTable) > 0) {
         <div class="form-container">
             <form method="post">
                 <input type="hidden" name="action" value="create">
-                <h2>Add a Motorcycle</h2>
-                <input type="text" name="brand" placeholder="Brand" required>
-                <input type="text" name="model" placeholder="Model" required>
-                <input type="text" name="cylinder" placeholder="Cylinder" required>
-                <input type="date" name="prod_year" placeholder="Year" required>
-                <input type="text" name="plate" placeholder="Plate" required>
+                <h2 class="section__tittle">Add a Motorcycle</h2>
+                <ul>
+                    <li>
+                        <input type="text" name="brand" placeholder="Brand" required>
+                        <input type="text" name="model" placeholder="Model" required>
+                        <input type="date" name="prod_year" placeholder="Year" required>
+                    </li>
+                    <li>
+                        <input type="text" name="cylinder" placeholder="Cylinder" required>
+                        <input type="date" name="acquisition_date" placeholder="Year" required>
+                        <input type="text" name="plate" placeholder="Plate" required>
+                    </li>
+                </ul>
+
                 <button type="submit">Add</button>
             </form>
         </div>
