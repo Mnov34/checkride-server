@@ -1,5 +1,6 @@
 <?php
-$host = 'localhost'; // ou localhost
+// Connexion à la base de données
+$host = 'localhost';
 $dbname = 'checkride';
 $user = 'root';
 $password = '';
@@ -14,64 +15,63 @@ $options = [
 
 try {
     $conn = new PDO($dsn, $user, $password, $options);
-} catch (\PDOException $e) {
-    throw new \PDOException($e->getMessage(), (int)$e->getCode());
-}
 
-// Requête SQL pour récupérer les données pour le graphique
-// Préparation de la requête pour le graphique
-$sqlGraph = "SELECT date_kilometer, kilometer FROM kilometers WHERE Id_motorcycle = ? ORDER BY date_kilometer";
-$stmtGraph = $conn->prepare($sqlGraph);
-$stmtGraph->execute([1]); // Assurez-vous que cette valeur est dynamique si nécessaire
+    // Supposons que vous avez obtenu l'ID de la moto de l'utilisateur de manière sécurisée
+    $userId = 1; // Changez cette valeur selon la logique de votre application
 
-// Préparation des données pour le graphique
-$data = [];
-if ($stmtGraph->rowCount() > 0) {
-    while ($row = $stmtGraph->fetch(PDO::FETCH_ASSOC)) {
-        $data[] = [date('Y-m-d', strtotime($row["date_kilometer"])), (int)$row["kilometer"]];
+    // Requête SQL pour récupérer les données de maintenance pour la moto spécifique
+    $sqlTable = "SELECT m.brand, m.model, YEAR(m.prod_year) AS year, m.plate, 
+                        n.maintenance_kilometer, n.parts, n.maintenance_date AS date
+                 FROM motorcycle m
+                 JOIN maintenance n ON m.Id_motorcycle = n.Id_motorcycle
+                 WHERE m.Id_motorcycle = ?
+                 ORDER BY n.maintenance_date";
+    $stmtTable = $conn->prepare($sqlTable);
+    $stmtTable->execute([$userId]);
+
+    // Préparation des données pour le tableau de maintenance
+    $tableRows = '';
+    if ($stmtTable->rowCount() > 0) {
+        while ($row = $stmtTable->fetch(PDO::FETCH_ASSOC)) {
+            $tableRows .= "<tr>
+                        <td>{$row['brand']}</td>
+                        <td>{$row['model']}</td>
+                        <td>{$row['year']}</td>
+                        <td>{$row['plate']}</td>
+                        <td>{$row['maintenance_kilometer']}</td>
+                        <td>{$row['parts']}</td>
+                        <td>{$row['date']}</td>
+                      </tr>";
+        }
+    } else {
+        $tableRows .= "<tr><td colspan='7'>No results found</td></tr>";
     }
-} else {
-    echo "0 results";
-}
 
+    // Requête SQL pour récupérer les données pour le graphique pour la même moto
+    $sqlGraph = "SELECT date_kilometer, kilometer FROM kilometers WHERE Id_motorcycle = ? ORDER BY date_kilometer";
+    $stmtGraph = $conn->prepare($sqlGraph);
+    $stmtGraph->execute([$userId]);
 
-// Requête SQL pour récupérer les données pour le tableau
-// Préparation de la requête pour le tableau
-$sqlTable = "SELECT m.brand, m.model, YEAR(m.prod_year) AS year, m.plate, k.kilometer, k.date_kilometer AS date
-             FROM motorcycle m
-             JOIN kilometers k ON m.Id_motorcycle = k.Id_motorcycle
-             WHERE k.date_kilometer = (
-                 SELECT MAX(k2.date_kilometer)
-                 FROM kilometers k2
-                 WHERE k2.Id_motorcycle = m.Id_motorcycle
-             )";
-$stmtTable = $conn->prepare($sqlTable);
-$stmtTable->execute();
-
-// Préparation des données pour le tableau
-$tableRows = '';
-if ($stmtTable->rowCount() > 0) {
-    while ($row = $stmtTable->fetch(PDO::FETCH_ASSOC)) {
-        $tableRows .= "<tr>
-                    <td>{$row['brand']}</td>
-                    <td>{$row['model']}</td>
-                    <td>{$row['year']}</td>
-                    <td>{$row['plate']}</td>
-                    <td>{$row['kilometer']}</td>
-                    <td>{$row['date']}</td>
-                  </tr>";
+    // Préparation des données pour le graphique
+    $data = [];
+    if ($stmtGraph->rowCount() > 0) {
+        while ($row = $stmtGraph->fetch(PDO::FETCH_ASSOC)) {
+            $data[] = [date('Y-m-d', strtotime($row["date_kilometer"])), (int)$row["kilometer"]];
+        }
+    } else {
+        echo "0 results";
     }
-} else {
-    $tableRows .= "<tr><td colspan='6'>No results found</td></tr>";
-}
 
+} catch (PDOException $e) {
+    throw new PDOException($e->getMessage(), (int)$e->getCode());
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Maintenance de Moto</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -99,10 +99,9 @@ if ($stmtTable->rowCount() > 0) {
 <body>
 <header>
     <nav>
-        <a href="../checkride_home/accueil.php">Home</a>
-        <a href="../bikes/bikes.php">Bikes</a>
+        <a href="../checkride_home/accueil.php">Accueil</a>
+        <a href="../bikes/bikes.php">Motos</a>
         <a href="../contact/contact.php">Contact</a>
-        <span></span>
     </nav>
 </header>
 
@@ -117,6 +116,7 @@ if ($stmtTable->rowCount() > 0) {
                 <th>Year</th>
                 <th>Plate</th>
                 <th>Kilometer</th>
+                <th>Parts</th>
                 <th>Date</th>
             </tr>
             </thead>
