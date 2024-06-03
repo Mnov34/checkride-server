@@ -1,5 +1,6 @@
 <?php
-$host = 'localhost'; // ou localhost
+// Connexion à la base de données
+$host = 'localhost';
 $dbname = 'checkride';
 $user = 'root';
 $password = '';
@@ -18,7 +19,7 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-// Handle CRUD operations
+// Gestion des requêtes POST pour créer une moto
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST['action'];
     if ($action == "create") {
@@ -28,31 +29,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $prod_year = $_POST['prod_year'];
         $plate = $_POST['plate'];
         $acquisition_date = $_POST['acquisition_date'];
-        $Id_checkride_user = 1; // Ajustez cette valeur selon votre logique
+        $Id_checkride_user = 3;  // Ce devrait être récupéré de manière sécurisée ou de la session utilisateur
 
-        // Utilisation des requêtes préparées pour une meilleure sécurité
         $sql = "INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, acquisition_date, Id_checkride_user) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate, $acquisition_date, $Id_checkride_user]);
     }
 }
 
-// Requête SQL pour récupérer les données pour le tableau
-$sqlTable = "SELECT * FROM motorcycle";
-$stmt = $conn->prepare($sqlTable);
-$stmt->execute();
-$resultTable = $stmt->fetchAll();
+// Affichage des motos de l'utilisateur connecté
+$Id_checkride_user = 3;  // Supposons que vous avez obtenu l'ID de l'utilisateur de manière sécurisée
+
+$sqlTable = "SELECT * FROM motorcycle WHERE Id_checkride_user = ?";
+$stmtTable = $conn->prepare($sqlTable);
+$stmtTable->execute([$Id_checkride_user]);
 
 $tableRows = '';
-if (count($resultTable) > 0) {
-    foreach ($resultTable as $row) {
+if ($stmtTable->rowCount() > 0) {
+    while ($row = $stmtTable->fetch(PDO::FETCH_ASSOC)) {
         $tableRows .= "<tr>
-                    <td>{$row['brand']}</td>
-                    <td>{$row['model']}</td>
-                    <td>{$row['cylinder']}</td>
-                    <td>{$row['prod_year']}</td>
-                    <td>{$row['plate']}</td>
-                  </tr>";
+                        <td>{$row['brand']}</td>
+                        <td>{$row['model']}</td>
+                        <td>{$row['cylinder']}</td>
+                        <td>{$row['prod_year']}</td>
+                        <td>{$row['plate']}</td>
+                      </tr>";
     }
 } else {
     $tableRows .= "<tr><td colspan='5'>No results found</td></tr>";
@@ -63,7 +64,7 @@ if (count($resultTable) > 0) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Motorcycle</title>
+    <title>Motorcycle Management</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
 </head>
@@ -73,35 +74,34 @@ if (count($resultTable) > 0) {
         <a href="../checkride_home/accueil.php">Home</a>
         <a href="../bikes/bikes.php">Bikes</a>
         <a href="../contact/contact.php">Contact</a>
-        <span></span>
     </nav>
 </header>
-
 <div class="main-container">
-        <div class="form-container">
-            <form method="post">
-                <input type="hidden" name="action" value="create">
-                <h2 class="section__tittle">Add a Motorcycle</h2>
-                <ul>
-                    <li>
+    <div class="form-container">
+        <form method="post">
+            <input type="hidden" name="action" value="create">
+            <h2 class="section_title">Add a Motorcycle</h2>
+            <ul>
+                <li>
+
+                    <label>
                         <input type="text" name="brand" placeholder="Brand" required>
                         <input type="text" name="model" placeholder="Model" required>
                         <input type="date" name="prod_year" placeholder="Year" required>
-                    </li>
-                    <li>
+                    </label>
+                    <label>
                         <input type="text" name="cylinder" placeholder="Cylinder" required>
-                        <input type="date" name="acquisition_date" placeholder="Year" required>
+                        <input type="date" name="acquisition_date" placeholder="Acquisition Year" required>
                         <input type="text" name="plate" placeholder="Plate" required>
-                    </li>
-                </ul>
-
-                <button type="submit">Add</button>
-            </form>
-        </div>
-
+                    </label>
+                </li>
+            </ul>
+            <button type="submit">Add</button>
+        </form>
+    </div>
     <div class="container">
-            <table>
-                <thead>
+        <table>
+            <thead>
                 <tr>
                     <th>Brand</th>
                     <th>Model</th>
@@ -109,11 +109,11 @@ if (count($resultTable) > 0) {
                     <th>Year</th>
                     <th>Plate</th>
                 </tr>
-                </thead>
-                <tbody>
-                <?php echo $tableRows; ?>
-                </tbody>
-            </table>
+            </thead>
+            <tbody>
+            <?php echo $tableRows; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

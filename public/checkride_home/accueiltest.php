@@ -99,9 +99,9 @@ try {
 <body>
 <header>
     <nav>
-        <a href="../checkride_home/accueil.php">Home</a>
-        <a href="../bikes/bikes.php">Bikes</a>
-        <a href="../contact/contact.php">Contact</a>
+        <a href="../checkride_home/accueiltest.php">Home</a>
+        <a href="../bikes/bikestest.php">Bikes</a>
+        <a href="#">Contact</a>
         <span></span>
     </nav>
 </header>
