@@ -1,103 +1,96 @@
 <?php
-//include "config/db_conn.php";
+include 'config.php';
 
-// Configuration de la connexion à la base de données
-$host = 'localhost'; // ou localhost
-$dbname = 'checkride';
-$user = 'root';
-$password = '';
-$charset = 'utf8mb4';
-
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false,
-];
-
-$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
-try {
-    $pdo = new PDO($dsn, $user, $password, $options);
-} catch (PDOException $e) {
-    throw new PDOException($e->getMessage(), (int)$e->getCode());
-}
-
-$action = $_POST['action'] ?? '';
-
-// Gestion des actions
-switch ($action) {
-    case 'fetchMotorcycles':
-        fetchMotorcycles($pdo);
-        break;
-    case 'insertMotorcycle':
-        insertMotorcycle($pdo, $_POST);
-        break;
-    case 'getMotorcycleDetails':
-        getMotorcycleDetails($pdo, $_POST['id']);
-        break;
-    case 'updateMotorcycle':
-        updateMotorcycle($pdo, $_POST);
-        break;
-    case 'deleteMotorcycle':
-        deleteMotorcycle($pdo, $_POST['id']);
-        break;
-    default:
-        echo "Action not recognized.";
-}
-
-// Fonctions pour gérer les requêtes SQL
-function fetchMotorcycles($pdo): void
+// Fonction pour ajouter une nouvelle moto
+function addMotorcycle($brand, $model, $cylinder, $prod_year, $plate): void
 {
-    $stmt = $pdo->query("SELECT * FROM motorcycle");
-    $motorcycles = $stmt->fetchAll();
-    echo json_encode(['data' => $motorcycles]);
+    global $conn;
+    try {
+        $stmt = $conn->prepare("INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, Id_checkride_user) VALUES (?, ?, ?, ?, ?, 1)");
+        $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate]);
+        header('Location: index.php?success=Motorcycle added successfully.');
+        exit();
+    } catch (Exception $e) {
+        die("Error inserting motorcycle: " . $e->getMessage());
+    }
 }
 
-function insertMotorcycle($pdo, $data): void
+// Fonction pour mettre à jour une moto existante
+function updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate): void
 {
-    $sql = "INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, acquisition_date, Id_checkride_user) VALUES (:brand, :model, :cylinder, :prod_year, :plate, :acquisition_date, :Id_checkride_user)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':brand' => $data['brand'],
-        ':model' => $data['model'],
-        ':cylinder' => $data['cylinder'],
-        ':prod_year' => $data['prod_year'],
-        ':plate' => $data['plate'],
-        ':acquisition_date' => $data['acquisition_date'],
-        ':Id_checkride_user' => $data['Id_checkride_user'] // Assurez-vous que cette valeur est transmise dans $_POST
-    ]);
-    echo json_encode(['statusCode' => 200]);
+    global $conn;
+    try {
+        $stmt = $conn->prepare("UPDATE motorcycle SET brand=?, model=?, cylinder=?, prod_year=?, plate=? WHERE Id_motorcycle=?");
+        $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate, $id]);
+        header('Location: index.php?success=Motorcycle updated successfully.');
+        exit();
+    } catch (Exception $e) {
+        die("Error updating motorcycle: " . $e->getMessage());
+    }
 }
 
-
-function getMotorcycleDetails($pdo, $id): void
+// Fonction pour supprimer une moto
+function deleteMotorcycle($id): void
 {
-    $sql = "SELECT * FROM motorcycle WHERE Id_motorcycle = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':id' => $id]);
-    $motorcycle = $stmt->fetch();
-    echo json_encode(['data' => $motorcycle]);
+    global $conn;
+    try {
+        $stmt = $conn->prepare("DELETE FROM motorcycle WHERE Id_motorcycle=?");
+        $stmt->execute([$id]);
+        header('Location: index.php?success=Motorcycle deleted successfully.');
+        exit();
+    } catch (Exception $e) {
+        die("Error deleting motorcycle: " . $e->getMessage());
+    }
 }
 
-function updateMotorcycle($pdo, $data): void
+// Fonction pour récupérer les données d'une moto pour l'édition
+function editMotorcycle($id): void
 {
-    $sql = "UPDATE motorcycle SET brand = :brand, model = :model, cylinder = :cylinder, prod_year = :prod_year, plate = :plate, acquisition_date = :acquisition_date WHERE Id_motorcycle = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':brand' => $data['brand'],
-        ':model' => $data['model'],
-        ':cylinder' => $data['cylinder'],
-        ':prod_year' => $data['prod_year'],
-        ':plate' => $data['plate'],
-        ':acquisition_date' => $data['acquisition_date'],
-        ':id' => $data['Id_motorcycle']
-    ]);
-    echo json_encode(['statusCode' => 200]);
+    global $conn;
+    try {
+        $stmt = $conn->prepare("SELECT * FROM motorcycle WHERE Id_motorcycle=?");
+        $stmt->execute([$id]);
+        $motorcycle = $stmt->fetch(PDO::FETCH_ASSOC);
+        header('Location: index.php?edit=' . urlencode(json_encode($motorcycle)));
+        exit();
+    } catch (Exception $e) {
+        die("Error fetching motorcycle: " . $e->getMessage());
+    }
 }
 
-function deleteMotorcycle($pdo, $id): void
-{
-    $sql = "DELETE FROM motorcycle WHERE Id_motorcycle = :id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':id' => $id]);
-    echo json_encode(['statusCode' => 200]);
+// Gérer la requête POST en fonction de l'action
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $action = $_POST['action'];
+    $id = $_POST['id'] ?? null;
+    $brand = $_POST['motorcycle_brand'] ?? null;
+    $model = $_POST['model'] ?? null;
+    $cylinder = $_POST['cylinder'] ?? null;
+    $prod_year = $_POST['prod_year'] ?? null;
+    $plate = $_POST['plate'] ?? null;
+
+    if ($action == 'insert') {
+        if (empty($brand) || empty($model) || empty($cylinder) || empty($prod_year) || empty($plate)) {
+            header('Location: index.php?error=All fields are required.');
+            exit();
+        }
+        addMotorcycle($brand, $model, $cylinder, $prod_year, $plate);
+    } elseif ($action == 'update') {
+        if (empty($id) || empty($brand) || empty($model) || empty($cylinder) || empty($prod_year) || empty($plate)) {
+            header('Location: index.php?error=All fields are required.');
+            exit();
+        }
+        updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate);
+    } elseif ($action == 'delete') {
+        if (empty($id)) {
+            header('Location: index.php?error=ID is required.');
+            exit();
+        }
+        deleteMotorcycle($id);
+    } elseif ($action == 'edit') {
+        if (empty($id)) {
+            header('Location: index.php?error=ID is required.');
+            exit();
+        }
+        editMotorcycle($id);
+    }
 }
