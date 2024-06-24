@@ -1,6 +1,6 @@
 <?php
 
-namespace src\app\controllers\login;
+namespace src\app\controllers;
 
 use PDOException;
 use src\app\models\User;

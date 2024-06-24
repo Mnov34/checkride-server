@@ -8,7 +8,7 @@
     "checkride",
     "mechanic"
   ],
-  "type": "projet",
+  "type": "project",
   "authors": [
     {
       "name": "Maël NOUVEL",
@@ -23,13 +23,17 @@
   ],
   "autoload": {
     "psr-4": {
-      "src\\": "src/"
+      "src\\": "src/",
+      "core\\": "bootstrap/"
     },
     "files": [
-      "config/constants.php"
+      "config/constants.php",
+      "vendor/autoload.php",
+      "bootstrap/helpers/app.php"
     ],
     "classmap": [
-      "src/"
+      "src/",
+      "bootstrap/"
     ]
   },
   "require": {
