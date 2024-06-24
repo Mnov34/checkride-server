@@ -1,10 +1,10 @@
 <?php
 
-namespace src\app\controllers\bike;
+namespace src\app\controllers;
 
 use src\app\models\Bike;
 
-require_once '../models/Bike.php';
+require_once '../../models/Bike.php';
 
 class BikeController {
     protected $pdo;
@@ -16,7 +16,7 @@ class BikeController {
     }
 
     public function create($model, $brand) {
-        $this->bikeModel->saveBike($model, $brand);
+        $this->bikeModel->create($model, $brand);
         include '../views/createBike.php';
     }
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace src\app\controllers\login;
+namespace src\app\controllers;
 
-use src\app\models\User;
 use PDOException;
+use src\app\models\User;
 
 class RegisterController {
     private User $userModel;
