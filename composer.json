@@ -6,7 +6,8 @@
     "mvc",
     "php-mvc",
     "checkride",
-    "mechanic"
+    "mechanic",
+    "motorcycle"
   ],
   "type": "project",
   "authors": [
