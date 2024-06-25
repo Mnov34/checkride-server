@@ -98,7 +98,7 @@ function permission_user(): void {
     global $userNav;
     $userLogin = getById($userNav, 'users');
     if ($userLogin['role_id'] == 0) {
-        header('location:index.php');
+        header('location:home.php');
         exit;
     }
 }

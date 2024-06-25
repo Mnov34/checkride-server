@@ -1,22 +1,52 @@
 {
   "name": "gearshifters/checkride-server",
+  "description": "TODO",
   "keywords": [
-    "bike"
+    "bike",
+    "mvc",
+    "php-mvc",
+    "checkride",
+    "mechanic"
   ],
+  "type": "project",
   "authors": [
     {
       "name": "Maël NOUVEL",
-      "email": "maelnouvel@duck.com"
+      "email": "maelnouvel@duck.com",
+      "role": "dev"
     },
     {
-      "name": "Thomas HERVEUX"
+      "name": "Thomas HERVEUX",
+      "email": "herveux.thomas@gmail.com",
+      "role": "dev & idea"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "src\\": "src/",
+      "core\\": "bootstrap/"
+    },
+    "files": [
+      "config/constants.php",
+      "vendor/autoload.php",
+      "bootstrap/helpers/app.php"
+    ],
+    "classmap": [
+      "src/",
+      "bootstrap/"
+    ]
+  },
   "require": {
     "php": "^8.0",
+    "phpmailer/phpmailer": "^v6.9",
     "ext-pdo": "*",
     "ext-json": "*",
-    "vlucas/phpdotenv": "^v5.6",
-    "ext-mysqli": "*"
+    "vlucas/phpdotenv": "^v5.6"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
+  },
+  "support": {
+    "issues": "https://github.com/Azalphal/checkride-server/issues"
   }
 }
