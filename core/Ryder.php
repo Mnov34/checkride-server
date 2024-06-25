@@ -22,7 +22,7 @@ class Ryder {
         $callable = $this->match($method, $path);
 
         if (!$callable) {
-            throw new RuntimeException('Oops! you are lost', 404);
+            throw new RuntimeException('404 NOT FOUND', 404);
         }
 
         $class = "src\\app\\controllers\\" . $callable['class'];

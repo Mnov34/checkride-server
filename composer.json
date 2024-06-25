@@ -24,16 +24,16 @@
   "autoload": {
     "psr-4": {
       "src\\": "src/",
-      "core\\": "bootstrap/"
+      "core\\": "core/"
     },
     "files": [
       "config/constants.php",
       "vendor/autoload.php",
-      "bootstrap/helpers/app.php"
+      "core/helpers/app.php"
     ],
     "classmap": [
       "src/",
-      "bootstrap/"
+      "core/"
     ]
   },
   "require": {

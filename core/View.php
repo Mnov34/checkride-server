@@ -3,12 +3,8 @@
 
 namespace core;
 
-use RuntimeException;
-
 trait View {
-    /**
-     * @throws RuntimeException
-     */
+
     public function render($view, $params = []) {
         $position = strpos($view, ".");
         if ($position) {
@@ -19,7 +15,7 @@ trait View {
             return $this->generateView($view, $params);
         }
 
-        throw new RuntimeException("404 PAGE NOT FOUND", 404);
+        return view('shared.404');
     }
 
     private function generateView($view, $params): bool {
