@@ -1,10 +1,31 @@
 <?php
-// Assurez-vous que le chemin est correct
-global $conn;
-require_once __DIR__ . '/../../vendor/autoload.php';
+/**
+ * @return PDO
+ */
+function getConn(): PDO
+{
+    $host = 'localhost'; // ou localhost
+    $dbname = 'checkride';
+    $user = 'root';
+    $password = '';
+    $charset = 'utf8mb4';
 
-// Inclure le fichier de configuration
-include __DIR__ . '/config.php';
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ];
+
+    try {
+        $conn = new PDO($dsn, $user, $password, $options);
+    } catch (\PDOException $e) {
+        throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    }
+    return $conn;
+}
+
+$conn = getConn();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +34,8 @@ include __DIR__ . '/config.php';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHP MySQL CRUD with Bootstrap 5 and Datatables Library</title>
+    <title>Checkride</title>
+    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
@@ -21,7 +43,7 @@ include __DIR__ . '/config.php';
     <!-- Datatables CSS  -->
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <!-- CSS  -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -39,79 +61,81 @@ include __DIR__ . '/config.php';
 
 <header>
     <nav>
-        <a href="../checkride_home/accueil.php">Home</a>
-        <a href="../bikes/bikes.php">Bikes</a>
-        <a href="../contact/contact.php">Contact</a>
+        <a href="../bikes/accueiltest.php">Home</a>
+        <a href="../bikes/bikestest.php">Bikes</a>
+        <a href="../bikes/contact.php">Contact</a>
         <span></span>
     </nav>
 </header>
 <div class="container">
-    <div class="custom-text-white d-flex justify-content-between align-items-center mb-3">
-        <div class="text-body-secondary">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-white">
             <span class="h5">Motorcycle</span>
             <br>
             Manage all your existing motorcycle or add a new one.
         </div>
         <!-- Button to trigger Add user offcanvas -->
-        <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
             <i class="fa-solid fa-user-plus fa-xs"></i>
             Add new motorcycle
         </button>
     </div>
-
-    <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
-        <thead class="table-dark">
-        <tr>
-            <th>#</th>
-            <th>Brand</th>
-            <th>Model</th>
-            <th>Cylinder</th>
-            <th>Year</th>
-            <th>Plate</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        $stmt = $conn->prepare("SELECT * FROM motorcycle");
-        $stmt->execute();
-        $motorcycles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($motorcycles as $motorcycle) {
-            echo "<tr>
-                                <td>{$motorcycle['Id_motorcycle']}</td>
-                                <td>{$motorcycle['brand']}</td>
-                                <td>{$motorcycle['model']}</td>
-                                <td>{$motorcycle['cylinder']}</td>
-                                <td>{$motorcycle['prod_year']}</td>
-                                <td>{$motorcycle['plate']}</td>
-                                <td>
-                                    <form method='POST' action='server.php' style='display:inline-block;'>
-                                        <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
-                                        <button type='submit' name='action' value='edit' class='btn btn-primary'>Edit</button>
-                                    </form>
-                                    <form method='POST' action='server.php' style='display:inline-block;'>
-                                        <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
-                                        <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
-                                    </form>
-                                </td>
-                              </tr>";
-        }
-        ?>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
+            <thead class="table">
+                    <tr class="blue">
+                        <th>#</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Cylinder</th>
+                        <th>Year</th>
+                        <th>Plate</th>
+                        <th>Actions</th>
+                    </tr>
+            </thead>
+            <tbody>
+            <?php
+            $stmt = $conn->prepare("SELECT * FROM motorcycle");
+            $stmt->execute();
+            $motorcycles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($motorcycles as $motorcycle) {
+                echo "<tr>
+                                    <td>{$motorcycle['Id_motorcycle']}</td>
+                                    <td>{$motorcycle['brand']}</td>
+                                    <td>{$motorcycle['model']}</td>
+                                    <td>{$motorcycle['cylinder']}</td>
+                                    <td>{$motorcycle['prod_year']}</td>
+                                    <td>{$motorcycle['plate']}</td>
+                                    <td>
+                                        <form method='POST' action='server.php' style='display:inline-block;'>
+                                            <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
+                                            <button type='submit' name='action' value='edit' class='btn btn-primary'>Edit</button>
+                                        </form>
+                                        <form method='POST' action='server.php' style='display:inline-block;'>
+                                            <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
+                                            <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
+                                        </form>
+                                    </td>
+                                  </tr>";
+            }
+            ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
+
 <!-- Add Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px;">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Add new Motorcycle</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <form method="POST" action="server.php">
             <div class="row mb-3">
                 <div class="col">
-                    <label class="form-label">Brand
+                    <label class="form-label">Brand</label>
                         <select name="motorcycle_brand" class="form-control" required>
                             <option value="Aprilia">Aprilia</option>
                             <option value="Benelli">Benelli</option>
@@ -142,28 +166,23 @@ include __DIR__ . '/config.php';
                             <option value="Victory">Victory</option>
                             <option value="Yamaha">Yamaha</option>
                         </select>
-                    </label>
                 </div>
                 <div class="col">
-                    <label class="form-label">Model
+                    <label class="form-label">Model</label>
                         <input type="text" class="form-control" name="model" placeholder="Model" required>
-                    </label>
                 </div>
             </div>
             <div class="col">
-                <label class="form-label">Cylinder
+                <label class="form-label">Cylinder</label>
                     <input type="text" class="form-control" name="cylinder" placeholder="Cylinder" required>
-                </label>
             </div>
             <div class="col">
-                <label class="form-label">Year
+                <label class="form-label">Year</label>
                     <input type="date" class="form-control" name="prod_year" required>
-                </label>
             </div>
             <div class="col">
-                <label class="form-label">Plate
+                <label class="form-label">Plate</label>
                     <input type="text" class="form-control" name="plate" placeholder="AA-123-AA" required>
-                </label>
             </div>
             <br>
             <div>
@@ -175,17 +194,17 @@ include __DIR__ . '/config.php';
 </div>
 
 <!-- Edit Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEditUser" style="width:600px;">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Motorcycle</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <form method="POST" action="server.php" id="editForm">
             <input type="hidden" name="id" id="id">
             <div class="row mb-3">
                 <div class="col">
-                    <label class="form-label">Brand
+                    <label class="form-label">Brand</label>
                         <select name="motorcycle_brand" class="form-control">
                             <option value="Aprilia">Aprilia</option>
                             <option value="Benelli">Benelli</option>
@@ -216,28 +235,23 @@ include __DIR__ . '/config.php';
                             <option value="Victory">Victory</option>
                             <option value="Yamaha">Yamaha</option>
                         </select>
-                    </label>
                 </div>
                 <div class="col">
-                    <label class="form-label">Model
+                    <label class="form-label">Model</label>
                         <input type="text" class="form-control" name="model" placeholder="Model">
-                    </label>
                 </div>
             </div>
             <div class="col">
-                <label class="form-label">Cylinder
+                <label class="form-label">Cylinder</label>
                     <input type="text" class="form-control" name="cylinder" placeholder="Cylinder">
-                </label>
             </div>
             <div class="col">
-                <label class="form-label">Year
+                <label class="form-label">Year</label>
                     <input type="date" class="form-control" name="prod_year">
-                </label>
             </div>
             <div class="col">
-                <label class="form-label">Plate
+                <label class="form-label">Plate</label>
                     <input type="text" class="form-control" name="plate" placeholder="AA-123-AA">
-                </label>
             </div>
             <br>
             <div>

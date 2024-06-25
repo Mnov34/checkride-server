@@ -1,5 +1,5 @@
 <?php
-$host = 'localhost'; // ou localhost
+$conn = getConn(); // ou localhost
 $dbname = 'checkride';
 $user = 'root';
 $password = '';
