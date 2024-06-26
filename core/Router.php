@@ -2,32 +2,31 @@
 
 namespace core;
 
-trait Router {
-    private static $map;
+class Router {
 
-    public static function get($url, $class, $method) {
-        self::cleanUrl($url);
-        self::cleanClass($class);
-        self::cleanMethod($method);
+    protected array $routes = [];
+    public Request $request;
 
-        self::$map['get'][$url] = ['class' => $class, 'method' => $method];
+    /**
+     * @param Request $request
+     */
+    public function __construct(Request $request) {
+        $this->request = $request;
     }
 
-    public static function post($url, $class, $method) {
-        self::cleanUrl($url);
-        self::cleanClass($class);
-        self::cleanMethod($method);
 
-        self::$map['post'][$url] = ['class' => $class, 'method' => $method];
+    public function get($path, $callback) {
+        $this->routes['get'][$path] = $callback;
     }
 
-    private static function cleanUrl($url) {}
+    public function resolve() {
+        $path = $this->request->getPath();
+        $method = $this->request->getMethod();
+        $callback = $this->routes[$method][$path] ?? false;
 
-    private static function cleanClass($class) {}
+        if ($callback === false) { echo 'NOT FOUND'; exit(); }
 
-    private static function cleanMethod($method) {}
-
-    public static function getMap() {
-        return self::$map;
+        echo $callback();
     }
+
 }

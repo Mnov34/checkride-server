@@ -29,8 +29,7 @@
     },
     "files": [
       "config/constants.php",
-      "vendor/autoload.php",
-      "core/helpers/app.php"
+      "vendor/autoload.php"
     ],
     "classmap": [
       "src/",
