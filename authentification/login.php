@@ -87,7 +87,7 @@
         }
 
         ::placeholder {
-            color: #fff;
+            color: #F1F2FF;
         }
         .drop {
             background: rgba(255, 255, 255, .3);

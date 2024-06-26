@@ -83,15 +83,15 @@ $conn = getConn();
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
             <thead class="table">
-                    <tr class="blue">
-                        <th>#</th>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Cylinder</th>
-                        <th>Year</th>
-                        <th>Plate</th>
-                        <th>Actions</th>
-                    </tr>
+            <tr class="blue">
+                <th>#</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Cylinder</th>
+                <th>Year</th>
+                <th>Plate</th>
+                <th>Actions</th>
+            </tr>
             </thead>
             <tbody>
             <?php
@@ -136,53 +136,53 @@ $conn = getConn();
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Brand</label>
-                        <select name="motorcycle_brand" class="form-control" required>
-                            <option value="Aprilia">Aprilia</option>
-                            <option value="Benelli">Benelli</option>
-                            <option value="Beta">Beta</option>
-                            <option value="BMW">BMW</option>
-                            <option value="Buell">Buell</option>
-                            <option value="Cagiva">Cagiva</option>
-                            <option value="Can-Am">Can-Am</option>
-                            <option value="Ducati">Ducati</option>
-                            <option value="Gas Gas">Gas Gas</option>
-                            <option value="Harley-Davidson">Harley-Davidson</option>
-                            <option value="Honda">Honda</option>
-                            <option value="Husaberg">Husaberg</option>
-                            <option value="Husqvarna">Husqvarna</option>
-                            <option value="Indian">Indian</option>
-                            <option value="Kawasaki">Kawasaki</option>
-                            <option value="KTM">KTM</option>
-                            <option value="Moto Guzzi">Moto Guzzi</option>
-                            <option value="MV Agusta">MV Agusta</option>
-                            <option value="Norton">Norton</option>
-                            <option value="Peugeot">Peugeot</option>
-                            <option value="Piaggio">Piaggio</option>
-                            <option value="Royal Enfield">Royal Enfield</option>
-                            <option value="Sherco">Sherco</option>
-                            <option value="Suzuki">Suzuki</option>
-                            <option value="Triumph">Triumph</option>
-                            <option value="Vespa">Vespa</option>
-                            <option value="Victory">Victory</option>
-                            <option value="Yamaha">Yamaha</option>
-                        </select>
+                    <select name="motorcycle_brand" class="form-control" required>
+                        <option value="Aprilia">Aprilia</option>
+                        <option value="Benelli">Benelli</option>
+                        <option value="Beta">Beta</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Buell">Buell</option>
+                        <option value="Cagiva">Cagiva</option>
+                        <option value="Can-Am">Can-Am</option>
+                        <option value="Ducati">Ducati</option>
+                        <option value="Gas Gas">Gas Gas</option>
+                        <option value="Harley-Davidson">Harley-Davidson</option>
+                        <option value="Honda">Honda</option>
+                        <option value="Husaberg">Husaberg</option>
+                        <option value="Husqvarna">Husqvarna</option>
+                        <option value="Indian">Indian</option>
+                        <option value="Kawasaki">Kawasaki</option>
+                        <option value="KTM">KTM</option>
+                        <option value="Moto Guzzi">Moto Guzzi</option>
+                        <option value="MV Agusta">MV Agusta</option>
+                        <option value="Norton">Norton</option>
+                        <option value="Peugeot">Peugeot</option>
+                        <option value="Piaggio">Piaggio</option>
+                        <option value="Royal Enfield">Royal Enfield</option>
+                        <option value="Sherco">Sherco</option>
+                        <option value="Suzuki">Suzuki</option>
+                        <option value="Triumph">Triumph</option>
+                        <option value="Vespa">Vespa</option>
+                        <option value="Victory">Victory</option>
+                        <option value="Yamaha">Yamaha</option>
+                    </select>
                 </div>
                 <div class="col">
                     <label class="form-label">Model</label>
-                        <input type="text" class="form-control" name="model" placeholder="Model" required>
+                    <input type="text" class="form-control" name="model" placeholder="Model" required>
                 </div>
             </div>
             <div class="col">
                 <label class="form-label">Cylinder</label>
-                    <input type="text" class="form-control" name="cylinder" placeholder="Cylinder" required>
+                <input type="text" class="form-control" name="cylinder" placeholder="Cylinder" required>
             </div>
             <div class="col">
                 <label class="form-label">Year</label>
-                    <input type="date" class="form-control" name="prod_year" required>
+                <input type="date" class="form-control" name="prod_year" required>
             </div>
             <div class="col">
                 <label class="form-label">Plate</label>
-                    <input type="text" class="form-control" name="plate" placeholder="AA-123-AA" required>
+                <input type="text" class="form-control" name="plate" placeholder="AA-123-AA" required>
             </div>
             <br>
             <div>
@@ -205,53 +205,53 @@ $conn = getConn();
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Brand</label>
-                        <select name="motorcycle_brand" class="form-control">
-                            <option value="Aprilia">Aprilia</option>
-                            <option value="Benelli">Benelli</option>
-                            <option value="Beta">Beta</option>
-                            <option value="BMW">BMW</option>
-                            <option value="Buell">Buell</option>
-                            <option value="Cagiva">Cagiva</option>
-                            <option value="Can-Am">Can-Am</option>
-                            <option value="Ducati">Ducati</option>
-                            <option value="Gas Gas">Gas Gas</option>
-                            <option value="Harley-Davidson">Harley-Davidson</option>
-                            <option value="Honda">Honda</option>
-                            <option value="Husaberg">Husaberg</option>
-                            <option value="Husqvarna">Husqvarna</option>
-                            <option value="Indian">Indian</option>
-                            <option value="Kawasaki">Kawasaki</option>
-                            <option value="KTM">KTM</option>
-                            <option value="Moto Guzzi">Moto Guzzi</option>
-                            <option value="MV Agusta">MV Agusta</option>
-                            <option value="Norton">Norton</option>
-                            <option value="Peugeot">Peugeot</option>
-                            <option value="Piaggio">Piaggio</option>
-                            <option value="Royal Enfield">Royal Enfield</option>
-                            <option value="Sherco">Sherco</option>
-                            <option value="Suzuki">Suzuki</option>
-                            <option value="Triumph">Triumph</option>
-                            <option value="Vespa">Vespa</option>
-                            <option value="Victory">Victory</option>
-                            <option value="Yamaha">Yamaha</option>
-                        </select>
+                    <select name="motorcycle_brand" class="form-control">
+                        <option value="Aprilia">Aprilia</option>
+                        <option value="Benelli">Benelli</option>
+                        <option value="Beta">Beta</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Buell">Buell</option>
+                        <option value="Cagiva">Cagiva</option>
+                        <option value="Can-Am">Can-Am</option>
+                        <option value="Ducati">Ducati</option>
+                        <option value="Gas Gas">Gas Gas</option>
+                        <option value="Harley-Davidson">Harley-Davidson</option>
+                        <option value="Honda">Honda</option>
+                        <option value="Husaberg">Husaberg</option>
+                        <option value="Husqvarna">Husqvarna</option>
+                        <option value="Indian">Indian</option>
+                        <option value="Kawasaki">Kawasaki</option>
+                        <option value="KTM">KTM</option>
+                        <option value="Moto Guzzi">Moto Guzzi</option>
+                        <option value="MV Agusta">MV Agusta</option>
+                        <option value="Norton">Norton</option>
+                        <option value="Peugeot">Peugeot</option>
+                        <option value="Piaggio">Piaggio</option>
+                        <option value="Royal Enfield">Royal Enfield</option>
+                        <option value="Sherco">Sherco</option>
+                        <option value="Suzuki">Suzuki</option>
+                        <option value="Triumph">Triumph</option>
+                        <option value="Vespa">Vespa</option>
+                        <option value="Victory">Victory</option>
+                        <option value="Yamaha">Yamaha</option>
+                    </select>
                 </div>
                 <div class="col">
                     <label class="form-label">Model</label>
-                        <input type="text" class="form-control" name="model" placeholder="Model">
+                    <input type="text" class="form-control" name="model" placeholder="Model">
                 </div>
             </div>
             <div class="col">
                 <label class="form-label">Cylinder</label>
-                    <input type="text" class="form-control" name="cylinder" placeholder="Cylinder">
+                <input type="text" class="form-control" name="cylinder" placeholder="Cylinder">
             </div>
             <div class="col">
                 <label class="form-label">Year</label>
-                    <input type="date" class="form-control" name="prod_year">
+                <input type="date" class="form-control" name="prod_year">
             </div>
             <div class="col">
                 <label class="form-label">Plate</label>
-                    <input type="text" class="form-control" name="plate" placeholder="AA-123-AA">
+                <input type="text" class="form-control" name="plate" placeholder="AA-123-AA">
             </div>
             <br>
             <div>

@@ -18,17 +18,16 @@
     </nav>
 </header>
 <div id="contacts" class="contact py-5 ">
-    <div class="container">
-        <h2 class="section__tittle text-center">CONTACT US !</h2>
-        <p class="text-center">Need help, more information or just to chat? Use our form to contact us!</p>
+    <div class="container text-white" style="background-color: #132B40; border-radius: 5px;">
+        <h2 class="section__tittle text-center text-white" style="padding-top: 20px">CONTACT US !</h2>
         <form action="https://formsubmit.co/boitemailenvoiephpmailer@gmail.com" method="POST" class="form">
             <div class="mb-3">
-                <label for="firstname" class="form-label">Firstname</label>
-                <input type="text" name="firstname" id="firstname" class="form-control" placeholder="Firstname" required>
+                <label for="CR_user" class="form-label">Checkride user</label>
+                <input type="text" name="CR_user" id="CR_user" class="form-control" placeholder="Checkride user" required>
             </div>
             <div class="mb-3">
-                <label for="lastname" class="form-label">Lastname</label>
-                <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Lastname" required>
+                <label for="Object" class="form-label">Object</label>
+                <input type="text" name="Object" id="Object" class="form-control" placeholder="Object" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -39,9 +38,10 @@
                 <textarea name="message" id="message" class="form-control" rows="4" placeholder="Message" required></textarea>
             </div>
             <div class="text-center">
-                <input type="submit" class="btn btn-primary" value="Send">
+                <input type="submit" class="btn btn-primary" value="SEND">
             </div>
         </form>
+        <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us!</p>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlHxhd5LYn3N1fV5RBbSCrL3yqU4J5pBIeFgDEBo7C7v8uSOq2u5Ixk6g4T" crossorigin="anonymous"></script>

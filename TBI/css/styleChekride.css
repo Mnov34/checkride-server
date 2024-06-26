@@ -11,7 +11,7 @@ body {
     margin: 0;
     padding-top: 50px;
     font-family: 'Poppins', sans-serif;
-    background-image: url("../img/fondsite2.jpg");
+    background-image: url("../../public/img/fondsite2.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: right center;

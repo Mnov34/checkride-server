@@ -1,11 +1,11 @@
-body {
+body{
     padding-top: 30px;
-    background-image: url("../img/fondsite2.jpg");
+    background-image: url("../../public/img/fondsite2.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: right center;
     background-attachment: fixed;
-    overflow: auto;
+    overflow: hidden;
 }
 
 header {
@@ -42,7 +42,7 @@ nav span {
     top: 0;
     left: 0;
     height: 100%;
-    background: #3B7EC9;
+    background: linear-gradient(45deg, #191d4a 0%, #2b5787 69%);
     border-radius: 8px;
     transition: .5s;
     z-index: 0;
@@ -64,32 +64,28 @@ nav a:nth-child(3):hover ~ span {
 }
 
 table {
-    color: black;
-}
-
-.table-responsive {
-    overflow-x: auto;
-    max-height: 80vh;
+    color: white;
+    background: rgba(255, 255, 255, .3);
 }
 
 th, td {
-    background-color: white;
     padding: 10px;
 }
 
-thead, th, .blue {
-    background-color: #132B40;
-    color: white;
+th {
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Style pour les lignes paires */
-tr:nth-child(even) td {
-    background-color: white;
+tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Style pour les lignes impaires */
-tr:nth-child(odd) td {
-    background-color: white;
+tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-text-white {
+    color: #ffffff;
 }
 
 .file-upload {
@@ -122,35 +118,3 @@ tr:nth-child(odd) td {
     object-fit: cover;
 }
 
-/*Formulaire*/
-#contacts {
-    padding: 40px;
-    overflow: auto;
-}
-.contact form {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.contact form input,
-.contact form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
-.contact form .btn {
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-.contact .section__tittle {
-    color: #000;
-    margin-bottom: 20px;
-}
-
-::placeholder {
-    color: #F1F2FF;
-}

@@ -68,14 +68,14 @@ if ($stmtTable->rowCount() > 0) {
     <link rel="stylesheet" href="../css/styleChekride.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="../../public/img/faviconmoto.png" type="image/png">
 </head>
 <body>
 <header>
     <nav>
         <a href="accueil.php">Home</a>
         <a href="../bikes/bikes.php">Bikes</a>
-        <a href="../bikes/contact.php">Contact</a>
+        <a href="../../public/bikes/contact.php">Contact</a>
         <span></span>
     </nav>
 </header>
