@@ -18,7 +18,7 @@
     </nav>
 </header>
 <div id="contacts" class="contact py-5 ">
-    <div class="container text-white" style="background-color: #132B40; border-radius: 5px;">
+    <div class="container text-white" style="background-color: #132B40; border-radius: 15px; max-width: 800px;">
         <h2 class="section__tittle text-center text-white" style="padding-top: 20px">CONTACT US !</h2>
         <form action="https://formsubmit.co/boitemailenvoiephpmailer@gmail.com" method="POST" class="form">
             <div class="mb-3">
@@ -38,10 +38,10 @@
                 <textarea name="message" id="message" class="form-control" rows="4" placeholder="Message" required></textarea>
             </div>
             <div class="text-center">
-                <input type="submit" class="btn btn-primary" value="SEND">
+                <input type="submit" class="btn btn-primary" value="SEND" style="max-width: 150px;">
             </div>
         </form>
-        <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us!</p>
+        <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us !</p>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlHxhd5LYn3N1fV5RBbSCrL3yqU4J5pBIeFgDEBo7C7v8uSOq2u5Ixk6g4T" crossorigin="anonymous"></script>

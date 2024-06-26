@@ -21,14 +21,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = htmlspecialchars($_POST['password']);
 
     try {
-        $query = "SELECT * FROM `users` WHERE username = :username AND password = :password";
+        $query = "SELECT * FROM `checkride_user` WHERE CR_user = :username AND CR_password = :password";
         $stmt = $conn->prepare($query);
         $stmt->execute([':username' => $username, ':password' => hash('sha256', $password)]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($result) {
             $_SESSION['username'] = $username;
-            header("Location: index.php"); // Redirect to home page
+            // Assurez-vous que la colonne 'user_type' existe dans votre base de données
+            $_SESSION['user_type'] = $result['user_type']; // Sauvegarde du type d'utilisateur en session
+            if ($result['user_type'] === 'admin') {
+                header("Location: admin/home.php"); // Redirection des administrateurs
+            } else {
+                header("Location: accueiltest.php"); // Redirection des autres utilisateurs
+            }
         } else {
             $message = "Le nom d'utilisateur ou le mot de passe est incorrect.";
         }
@@ -39,16 +45,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <div id="contacts" class="contact py-5 ">
-    <div class="container text-white" style="background-color: #132B40; border-radius: 10px;max-width: 600px;">
+    <div class="container text-white" style="background-color: #132B40; border-radius: 15px;max-width: 370px;">
         <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Welcome</h2>
         <form action="" method="post" class="form">
             <div>
-                <label for="floatingInput" class="form-label">Email</label>
-                <input type="text" name="username" id="floatingInput" class="form-control" placeholder="Email" required">
+                <label for="floatingInput" class="form-label">Checkride user</label>
+                <input type="text" name="Checkride user" id="floatingInput" class="form-control" placeholder="Checkride user" style="max-width: 350px;required>
             </div>
             <div>
-                <label for="floatingPassword" class="form-label">Password</label>
-                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Password" required>
+                <label for="floatingPassword" class="form-label"">Password</label>
+                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Password" style="max-width: 350px; required>
             </div>
             <div class="text-center">
                 <div style="max-width: 150px; margin: 0 auto;">
@@ -61,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <?php if (!empty($message)) { echo "<p class='text-danger text-center mt-3'>$message</p>"; } ?>
         </form>
-        <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us!</p>
+        <br>
     </div>
 </div>
 

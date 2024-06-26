@@ -31,7 +31,7 @@ global $conn;
 <body>
 
 <div id="contacts" class="contact py-5">
-    <div class="container text-white" style="background-color: #132B40; border-radius: 5px;max-width: 800px;">
+    <div class="container text-white" style="background-color: #132B40; border-radius: 15px;max-width: 800px;">
         <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Inscription</h2>
         <form action="" method="post" class="form" onsubmit="return validatePassword();">
             <div>
@@ -75,15 +75,15 @@ global $conn;
         } else {
             try {
                 $conn->beginTransaction();
-                $statut = 'user';
+                $status = 'user';
 
-                $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, statut) VALUES (:CR_user, :CR_password, :email, :statut)";
+                $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, status) VALUES (:CR_user, :CR_password, :email, :status)";
                 $stmt1 = $conn->prepare($query1);
                 $stmt1->execute([
                     ':CR_user' => $CR_user,
                     ':CR_password' => hash('sha256', $CR_password),
                     ':email' => $email,
-                    ':statut' => $statut
+                    ':status' => $status
                 ]);
                 $id_checkride_user = $conn->lastInsertId();
 
