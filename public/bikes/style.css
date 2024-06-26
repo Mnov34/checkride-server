@@ -100,7 +100,6 @@ tr:nth-child(odd) td {
     align-items: center;
     height: 150px;
     padding: 30px;
-    border: 1px dashed silver;
     border-radius: 8px;
 }
 
@@ -117,8 +116,6 @@ tr:nth-child(odd) td {
 .preview_img {
     height: 80px;
     width: 80px;
-    border: 4px solid silver;
-    border-radius: 100%;
     object-fit: cover;
 }
 
@@ -136,7 +133,7 @@ tr:nth-child(odd) td {
 .contact form textarea {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .contact form .btn {
@@ -148,7 +145,7 @@ tr:nth-child(odd) td {
 
 .contact .section__tittle {
     color: #000;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 ::placeholder {

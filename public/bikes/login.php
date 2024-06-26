@@ -9,13 +9,7 @@
     <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
 </head>
 <body>
-<header>
-    <nav class="nav nav-pills nav-justified">
-        <a class="nav-link" href="../bikes/accueiltest.php">Home</a>
-        <a class="nav-link" href="../bikes/bikestest.php">Bikes</a>
-        <a class="nav-link" href="../bikes/contact.php">Contact</a>
-    </nav>
-</header>
+
 
 <?php
 global $conn;
@@ -44,27 +38,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form action="" method="post" class="p-4 shadow rounded text-white" style="background-color: #132B40";>
-                <h1 class="h3 mb-3 fw-normal text-center">Welcome</h1>
-                <div class="form-floating mb-3">
-                    <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Email" required>
-                    <label for="floatingInput">Email</label>
+<div id="contacts" class="contact py-5 ">
+    <div class="container text-white" style="background-color: #132B40; border-radius: 10px;max-width: 600px;">
+        <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Welcome</h2>
+        <form action="" method="post" class="form">
+            <div>
+                <label for="floatingInput" class="form-label">Email</label>
+                <input type="text" name="username" id="floatingInput" class="form-control" placeholder="Email" required">
+            </div>
+            <div>
+                <label for="floatingPassword" class="form-label">Password</label>
+                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Password" required>
+            </div>
+            <div class="text-center">
+                <div style="max-width: 150px; margin: 0 auto;">
+                    <button class="btn btn-primary w-100" type="submit" style="border-radius: 15px;">Connexion</button>
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password" required>
-                    <label for="floatingPassword">Password</label>
-                </div>
-                <button class="w-100 btn btn-lg btn-secondary" type="submit">Connexion</button>
-                <div class="mt-3 text-center">
-                    <a href="#" class="d-block text-white">Forgotten password?</a>
-                    <a href="register.php" class="d-block text-white">No account yet?</a>
-                </div>
-                <?php if (!empty($message)) { echo "<p class='text-danger text-center mt-3'>$message</p>"; } ?>
-            </form>
-        </div>
+            </div>
+            <div class="mt-3 text-center">
+                <a href="#" class="d-block text-white">Forgotten password?</a>
+                <a href="./register.php" class="d-block text-white">No account yet?</a>
+            </div>
+            <?php if (!empty($message)) { echo "<p class='text-danger text-center mt-3'>$message</p>"; } ?>
+        </form>
+        <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us!</p>
     </div>
 </div>
 

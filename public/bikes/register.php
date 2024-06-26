@@ -1,155 +1,15 @@
+<?php
+global $conn;
+?>
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <style>
-        body {
-            position: relative;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to top right, #482673 0%, #2b5876 100%);
-            color: white;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .container.exception {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            /* Appliquer un z-index plus élevé */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 50%;
-            margin-top: 30px;
-        }
-
-        form {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 2rem;
-            border-radius: 20px;
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            box-shadow: 20px 20px 40px -6px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .success,
-        .error {
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            width: 60%;
-            color: white;
-            margin: 10px auto;
-        }
-
-        p {
-            color: white;
-            font-weight: 500;
-            opacity: .7;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
-            font-size: 1em;
-        }
-
-        a {
-            text-decoration: none;
-            color: #ddd;
-            font-size: 1em;
-        }
-
-        a:hover {
-            text-shadow: 2px 2px 6px #00000040;
-        }
-
-        a:active {
-            text-shadow: none;
-        }
-
-        input {
-            background: transparent;
-            border: none;
-            border-radius: 50px;
-            padding: 1rem;
-            width: 250px;
-            margin-bottom: 1.5em;
-            backdrop-filter: blur(5px);
-            box-shadow: 4px 4px 60px rgba(0, 0, 0, 0.2);
-            color: white;
-            transition: all 0.3s;
-        }
-
-        input[type="submit"] {
-            margin-top: 10px;
-            width: 150px;
-            cursor: pointer;
-        }
-
-        ::placeholder {
-            color: #fff;
-        }
-
-        .drop {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 10px;
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 10px 10px 60px -8px rgba(0, 0, 0, 0.2);
-            position: absolute;
-            transition: all 0.2s ease;
-        }
-
-        .drop-1 {
-            height: 80px;
-            width: 80px;
-            top: -20px;
-            left: -40px;
-            z-index: -1;
-        }
-
-        .drop-2 {
-            height: 80px;
-            width: 80px;
-            bottom: -40px;
-            right: -40px;
-        }
-
-        .drop-3 {
-            height: 100px;
-            width: 100px;
-            bottom: -40px;
-            left: -40px;
-            z-index: -1;
-        }
-
-        .drop-4 {
-            height: 120px;
-            width: 120px;
-            top: -60px;
-            right: -60px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckRide</title>
+    <link rel="stylesheet" href="./style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
     <script>
         function validatePassword() {
             var password = document.getElementsByName("CR_password")[0].value;
@@ -168,22 +28,37 @@
         }
     </script>
 </head>
-
 <body>
-<div class="container">
-    <form action="" method="post" onsubmit="return validatePassword();">
-        <h2>Inscription</h2>
-        <input type="text" name="CR_user" placeholder="User" required />
-        <input type="password" name="CR_password" placeholder="Password" required />
-        <input type="password" name="confirm_password" placeholder="Confirm password" required />
-        <input type="email" name="email" placeholder="Email" required />
-        <input type="submit" name="submit" value="Register" />
-        <p>If you already have an account,<br> <a href="login.php">click here to log in</a>.</p>
-    </form>
-    <div class="drop drop-1"></div>
-    <div class="drop drop-2"></div>
-    <div class="drop drop-3"></div>
-    <div class="drop drop-4"></div>
+
+<div id="contacts" class="contact py-5">
+    <div class="container text-white" style="background-color: #132B40; border-radius: 5px;max-width: 800px;">
+        <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Inscription</h2>
+        <form action="" method="post" class="form" onsubmit="return validatePassword();">
+            <div>
+                <label for="CR_user" class="form-label">User</label>
+                <input type="text" name="CR_user" id="CR_user" class="form-control" placeholder="User" required>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="CR_password" class="form-label">Password</label>
+                    <input type="password" name="CR_password" id="CR_password" class="form-control" placeholder="Password" required>
+                </div>
+                <div class="col">
+                    <label for="confirm_password" class="form-label">Confirm password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm password" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="text-center">
+                <input type="submit" name="submit" class="btn btn-primary w-100" value="REGISTER" style="max-width: 150px;border-radius: 15px;">
+            </div>
+            <p class="text-center mt-3 text-white">If you already have an account,<br> <a href="login.php" class="text-white">click here to log in</a>.</p>
+        </form>
+        <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us!</p>
+    </div>
 </div>
 <div class="container exception" id="messageContainer">
     <?php
@@ -224,6 +99,7 @@
     }
     ?>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlHxhd5LYn3N1fV5RBbSCrL3yQ4J5pBIeFgDEBo7C7v8uSOq2u5Ixk6g4T" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cgmxk3Jd3Ks6VVR3GclMSRLTwKbs9IOVSAwtHUf3chszfue4ZmGn5w5YpRa4oz9d" crossorigin="anonymous"></script>
 </body>
-
 </html>

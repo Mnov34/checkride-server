@@ -8,7 +8,7 @@ function addMotorcycle($brand, $model, $cylinder, $prod_year, $plate): void
     try {
         $stmt = $conn->prepare("INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, Id_checkride_user) VALUES (?, ?, ?, ?, ?, 1)");
         $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate]);
-        header('Location: index.php?success=Motorcycle added successfully.');
+        header('Location: bikestest.php?success=Motorcycle added successfully.');
         exit();
     } catch (Exception $e) {
         die("Error inserting motorcycle: " . $e->getMessage());
@@ -22,7 +22,7 @@ function updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate): v
     try {
         $stmt = $conn->prepare("UPDATE motorcycle SET brand=?, model=?, cylinder=?, prod_year=?, plate=? WHERE Id_motorcycle=?");
         $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate, $id]);
-        header('Location: index.php?success=Motorcycle updated successfully.');
+        header('Location: bikestest.php?success=Motorcycle updated successfully.');
         exit();
     } catch (Exception $e) {
         die("Error updating motorcycle: " . $e->getMessage());
@@ -36,7 +36,7 @@ function deleteMotorcycle($id): void
     try {
         $stmt = $conn->prepare("DELETE FROM motorcycle WHERE Id_motorcycle=?");
         $stmt->execute([$id]);
-        header('Location: index.php?success=Motorcycle deleted successfully.');
+        header('Location: bikestest.php?success=Motorcycle deleted successfully.');
         exit();
     } catch (Exception $e) {
         die("Error deleting motorcycle: " . $e->getMessage());
@@ -51,7 +51,7 @@ function editMotorcycle($id): void
         $stmt = $conn->prepare("SELECT * FROM motorcycle WHERE Id_motorcycle=?");
         $stmt->execute([$id]);
         $motorcycle = $stmt->fetch(PDO::FETCH_ASSOC);
-        header('Location: index.php?edit=' . urlencode(json_encode($motorcycle)));
+        header('Location: accueil.php?edit=' . urlencode(json_encode($motorcycle)));
         exit();
     } catch (Exception $e) {
         die("Error fetching motorcycle: " . $e->getMessage());
@@ -70,25 +70,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($action == 'insert') {
         if (empty($brand) || empty($model) || empty($cylinder) || empty($prod_year) || empty($plate)) {
-            header('Location: index.php?error=All fields are required.');
+            header('Location: bikestest.php?error=All fields are required.');
             exit();
         }
         addMotorcycle($brand, $model, $cylinder, $prod_year, $plate);
     } elseif ($action == 'update') {
         if (empty($id) || empty($brand) || empty($model) || empty($cylinder) || empty($prod_year) || empty($plate)) {
-            header('Location: index.php?error=All fields are required.');
+            header('Location: bikestest.php?error=All fields are required.');
             exit();
         }
         updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate);
     } elseif ($action == 'delete') {
         if (empty($id)) {
-            header('Location: index.php?error=ID is required.');
+            header('Location: bikestest.php?error=ID is required.');
             exit();
         }
         deleteMotorcycle($id);
     } elseif ($action == 'edit') {
         if (empty($id)) {
-            header('Location: index.php?error=ID is required.');
+            header('Location: bikestest.php?error=ID is required.');
             exit();
         }
         editMotorcycle($id);

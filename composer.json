@@ -24,7 +24,8 @@
   "autoload": {
     "files": [
       "config/constants.php",
-      "config/dbcreds.php"
+      "config/dbcreds.php",
+      "vendor/autoload.php"
     ],
     "classmap": [
       "src/"
