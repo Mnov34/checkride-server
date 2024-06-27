@@ -151,12 +151,6 @@ tr:nth-child(odd) td {
     color: #F1F2FF;
 }
 
-.table-responsive-home {
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
 .custom-modal .modal-content {
     background-color: #132B40;
     color: white;

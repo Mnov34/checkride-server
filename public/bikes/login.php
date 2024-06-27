@@ -38,22 +38,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $message = "Le nom d'utilisateur ou le mot de passe est incorrect.";
         }
     } catch (PDOException $e) {
-        $message = "Error: " . $e->getMessage();
+        $message = "Erreur : " . $e->getMessage();
     }
 }
 ?>
 
 <div id="contacts" class="contact py-5 ">
     <div class="container text-white" style="background-color: #132B40; border-radius: 15px; max-width: 370px;">
-        <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Welcome</h2>
+        <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Bienvenue</h2>
         <form action="" method="post" class="form">
             <div>
-                <label for="floatingInput" class="form-label">Checkride user</label>
-                <input type="text" name="username" id="floatingInput" class="form-control" placeholder="Checkride user" style="max-width: 350px;" required>
+                <label for="floatingInput" class="form-label">Utilisateur Checkride</label>
+                <input type="text" name="username" id="floatingInput" class="form-control" placeholder="Utilisateur Checkride" style="max-width: 350px;" required>
             </div>
             <div>
-                <label for="floatingPassword" class="form-label">Password</label>
-                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Password" style="max-width: 350px;" required>
+                <label for="floatingPassword" class="form-label">Mot de passe</label>
+                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Mot de passe" style="max-width: 350px;" required>
             </div>
             <div class="text-center">
                 <div style="max-width: 150px; margin: 0 auto;">
@@ -61,8 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
             <div class="mt-3 text-center">
-                <a href="#" class="d-block text-white">Forgotten password?</a>
-                <a href="./register.php" class="d-block text-white">No account yet?</a>
+                <a href="#" class="d-block text-white">Mot de passe oublié ?</a>
+                <a href="./register.php" class="d-block text-white">Pas encore de compte ?</a>
             </div>
             <?php if (!empty($message)) { echo "<p class='text-danger text-center mt-3'>$message</p>"; } ?>
         </form>

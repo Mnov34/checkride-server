@@ -1,4 +1,7 @@
 <?php
+require('session_manager.php');
+require_login();
+
 global $conn;
 require('config.php');
 session_start();
@@ -45,6 +48,8 @@ if(!isset($_SESSION["username"])) {
         <a href="../bikes/accueiltest.php">Home</a>
         <a href="../bikes/bikestest.php">Bikes</a>
         <a href="../bikes/contact.php">Contact</a>
+        <a href="../bikes/admin/add_user.php">Add user</a>
+        <a href="../bikes/admin/home.php">Admin home</a>
         <span></span>
     </nav>
 </header>

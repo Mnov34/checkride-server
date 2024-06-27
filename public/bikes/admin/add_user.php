@@ -1,3 +1,10 @@
+<?php
+global $conn;
+require('../config.php');
+require('../session_manager.php');
+require_admin();
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,8 +17,7 @@
 </head>
 <body>
 <?php
-global $conn;
-require('../config.php');
+
 
 if (isset($_POST['submit'], $_POST['username'], $_POST['email'], $_POST['type'], $_POST['CR_password'])) {
     $username = htmlspecialchars($_POST['username']);

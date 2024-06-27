@@ -1,6 +1,8 @@
 <?php
 global $conn;
 require('../config.php');
+require('../session_manager.php');
+require_admin();
 
 // Initialiser la session
 session_start();
@@ -76,22 +78,21 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <span></span>
     </nav>
 </header>
-<div class="container">
+<div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="text-white">
-            <span class="h5">CheckRide Users</span>
-            <br>
-            Manage all your existing users.
+            <h5>CheckRide Users</h5>
+            <p>Manage all your existing users.</p>
         </div>
     </div>
-    <div class="table-responsive table-responsive-home">
-        <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
-            <thead class="table">
-            <tr class="blue">
-                <th>User</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Actions</th>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle">
+            <thead class="table" style="background-color: #132B40;">
+            <tr>
+                <th class="col-3">User</th>
+                <th class="col-4">Email</th>
+                <th class="col-2">Status</th>
+                <th class="col-3">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -101,8 +102,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?php echo $row['email']; ?></td>
                     <td><?php echo $row['status']; ?></td>
                     <td>
-                        <a href="home.php?delete=<?php echo $row['Id_checkride_user']; ?>" class="btn btn-danger">Delete</a>
-                        <button class="btn btn-primary btn-edit" data-id="<?php echo $row['Id_checkride_user']; ?>" data-user="<?php echo $row['CR_user']; ?>" data-email="<?php echo $row['email']; ?>" data-status="<?php echo $row['status']; ?>">Edit</button>
+                        <a href="#" class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $row['Id_checkride_user']; ?>">Delete</a>
+                        <button class="btn btn-primary btn-sm btn-edit" data-id="<?php echo $row['Id_checkride_user']; ?>" data-user="<?php echo $row['CR_user']; ?>" data-email="<?php echo $row['email']; ?>" data-status="<?php echo $row['status']; ?>">Edit</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -186,6 +187,16 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $('#editStatus').val(status);
 
             $('#editUserModal').modal('show');
+        });
+
+        // Handle delete button click
+        $('.delete-btn').on('click', function(e) {
+            e.preventDefault();
+            var userId = $(this).data('id');
+            var result = confirm("Are you sure you want to delete this user?");
+            if (result) {
+                window.location.href = 'home.php?delete=' + userId;
+            }
         });
     });
 </script>

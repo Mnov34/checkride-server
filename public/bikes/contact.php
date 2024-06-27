@@ -1,3 +1,11 @@
+<?php
+require('session_manager.php');
+require_login();
+
+global $conn;
+require('./config.php');
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
