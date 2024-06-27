@@ -1,6 +1,6 @@
 <?php
 
-namespace src\app\models;
+namespace app\models;
 
 use PDO;
 use PDOException;
