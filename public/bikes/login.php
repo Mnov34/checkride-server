@@ -10,7 +10,6 @@
 </head>
 <body>
 
-
 <?php
 global $conn;
 require('config.php');
@@ -21,20 +20,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = htmlspecialchars($_POST['password']);
 
     try {
-        $query = "SELECT * FROM `checkride_user` WHERE CR_user = :username AND CR_password = :password";
+        $query = "SELECT * FROM `checkride_user` WHERE CR_user = :username";
         $stmt = $conn->prepare($query);
-        $stmt->execute([':username' => $username, ':password' => hash('sha256', $password)]);
+        $stmt->execute([':username' => $username]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($result) {
+        if ($result && hash('sha256', $password) == $result['CR_password']) {
             $_SESSION['username'] = $username;
-            // Assurez-vous que la colonne 'user_type' existe dans votre base de données
-            $_SESSION['user_type'] = $result['user_type']; // Sauvegarde du type d'utilisateur en session
-            if ($result['user_type'] === 'admin') {
-                header("Location: admin/home.php"); // Redirection des administrateurs
+            $_SESSION['status'] = $result['status'];
+            if ($result['status'] === 'admin') {
+                header("Location: admin/add_user.php");
             } else {
-                header("Location: accueiltest.php"); // Redirection des autres utilisateurs
+                header("Location: accueiltest.php");
             }
+            exit();
         } else {
             $message = "Le nom d'utilisateur ou le mot de passe est incorrect.";
         }
@@ -45,16 +44,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <div id="contacts" class="contact py-5 ">
-    <div class="container text-white" style="background-color: #132B40; border-radius: 15px;max-width: 370px;">
+    <div class="container text-white" style="background-color: #132B40; border-radius: 15px; max-width: 370px;">
         <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Welcome</h2>
         <form action="" method="post" class="form">
             <div>
                 <label for="floatingInput" class="form-label">Checkride user</label>
-                <input type="text" name="Checkride user" id="floatingInput" class="form-control" placeholder="Checkride user" style="max-width: 350px;required>
+                <input type="text" name="username" id="floatingInput" class="form-control" placeholder="Checkride user" style="max-width: 350px;" required>
             </div>
             <div>
-                <label for="floatingPassword" class="form-label"">Password</label>
-                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Password" style="max-width: 350px; required>
+                <label for="floatingPassword" class="form-label">Password</label>
+                <input type="password" name="password" id="floatingPassword" class="form-control" placeholder="Password" style="max-width: 350px;" required>
             </div>
             <div class="text-center">
                 <div style="max-width: 150px; margin: 0 auto;">

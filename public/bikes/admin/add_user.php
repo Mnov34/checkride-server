@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add User - CheckRide</title>
+    <title>CheckRide</title>
     <link rel="stylesheet" href="../style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="shortcut icon" href="./img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="../../img/faviconmoto.png" type="image/png">
 </head>
 <body>
 <?php
-global$conn;
+global $conn;
 require('../config.php');
 
-if (isset($_POST['username'], $_POST['email'], $_POST['type'], $_POST['password'])) {
+if (isset($_POST['submit'], $_POST['username'], $_POST['email'], $_POST['type'], $_POST['CR_password'])) {
     $username = htmlspecialchars($_POST['username']);
     $email = htmlspecialchars($_POST['email']);
-    $password = htmlspecialchars($_POST['password']);
     $type = htmlspecialchars($_POST['type']);
+    $password = htmlspecialchars($_POST['CR_password']); // Modifié pour correspondre au nom du champ dans le formulaire
     $hashed_password = hash('sha256', $password);
 
     try {
@@ -25,17 +25,21 @@ if (isset($_POST['username'], $_POST['email'], $_POST['type'], $_POST['password'
         $stmt = $conn->prepare($query);
         $stmt->execute([$username, $email, $type, $hashed_password]);
 
-        echo "<div class='alert alert-success'>L'utilisateur a été créé avec succès.</div>";
+        header('Location: add_user.php');
+        exit();
     } catch (PDOException $e) {
         echo "<div class='alert alert-danger'>Erreur lors de la création de l'utilisateur : " . $e->getMessage() . "</div>";
     }
-}else{
+} else {
 ?>
+
 <header>
     <nav>
-        <a href="../bikes/accueiltest.php">Home</a>
-        <a href="../bikes/bikestest.php">Bikes</a>
-        <a href="../bikes/contact.php">Contact</a>
+        <a href="../../bikes/accueiltest.php">Home</a>
+        <a href="../../bikes/bikestest.php">Bikes</a>
+        <a href="../../bikes/contact.php">Contact</a>
+        <a href="./add_user.php">Add user</a>
+        <a href="./home.php">Admin home</a>
         <span></span>
     </nav>
 </header>
@@ -55,8 +59,8 @@ if (isset($_POST['username'], $_POST['email'], $_POST['type'], $_POST['password'
             <label for="type" class="form-label text-white">Type</label>
             <select class="form-select" name="type" id="type" required>
                 <option value="" disabled selected>Select Type</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
+                <option value="admin">admin</option>
+                <option value="user">user</option>
             </select>
         </div>
         <div class="row mb-3 text-white">
