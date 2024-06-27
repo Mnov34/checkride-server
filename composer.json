@@ -24,20 +24,18 @@
   ],
   "autoload": {
     "psr-4": {
-      "src\\": "src/",
-      "core\\": "core/"
+      "app\\": "src/app/"
     },
     "files": [
       "config/constants.php",
       "vendor/autoload.php"
     ],
     "classmap": [
-      "src/",
-      "core/"
+      "src/app/"
     ]
   },
   "require": {
-    "php": "^8.0",
+    "php": "^8.3",
     "phpmailer/phpmailer": "^v6.9",
     "ext-pdo": "*",
     "ext-json": "*",
@@ -47,6 +45,6 @@
     "roave/security-advisories": "dev-latest"
   },
   "support": {
-    "issues": "https://github.com/Azalphal/checkride-server/issues"
+    "issues": "https://github.com/MNov34/checkride-server/issues"
   }
 }

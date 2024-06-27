@@ -4,6 +4,7 @@ namespace src\app\models;
 
 use PDO;
 use PDOException;
+use PDOStatement;
 
 /**
  * PDO Database Class
@@ -14,29 +15,28 @@ use PDOException;
  * @Author Azalphal
  */
 class Database {
-    private string $host = DB_HOST;
-    private string $user = DB_USER;
-    private string $pass = DB_PASS;
-    private string $name = DB_NAME;
+    private string $host = 'localhost';
+    private string $user = 'root';
+    private string $pass = 'root';
+    private string $name = 'checkride';
+    private string $port = '3306';
+    private string $charset = 'utf8mb4';
 
-    private PDO $db_handler;
-    private string $error;
-    private string $stmt;
+    private ?PDOStatement $stmt = null;
+    public PDO $conn;
 
     /**
      * Initialize une nouvelle connection a la base de donnée
      * a chaque fois qu'une nouvelle instance de la classe est initialisé
      */
     public function __construct() {
-        $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->name;
-        $options = [PDO::ATTR_PERSISTENT => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,];
+        $dsn = 'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->name . ";charset=" . $this->charset;
+        $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_PERSISTENT => true,];
 
-        // Create PDO Instance
         try {
-            $this->db_handler = new PDO($dsn, $this->user, $this->pass, $options);
+            $this->conn = new PDO($dsn, $this->user, $this->pass, $options);
         } catch (PDOException $e) {
-            $this->error = $e->getMessage();
-            echo $this->error;
+            die('Error: ' . $e->getMessage());
         }
     }
 
@@ -46,19 +46,29 @@ class Database {
      * @param $sql string Le contenu de la requête.
      * @return void
      */
-    public function query($sql) {
-        $this->stmt = $this->db_handler->prepare($sql);
+    final public function query(string $sql): void {
+        $this->stmt = $this->conn->prepare($sql);
+    }
+
+    /**
+     * Execute une requête sql
+     *
+     * @param array $args
+     * @return bool
+     */
+    final public function execute(array $args = []): bool {
+        return $this->stmt->execute($args);
     }
 
     /**
      * Bind les requêtes sql
      *
-     * @param $param
-     * @param $value
-     * @param $type
+     * @param mixed $param
+     * @param mixed $value
+     * @param mixed $type
      * @return void
      */
-    public function bind($param, $value, $type = null) {
+    final public function bind(mixed $param, mixed $value, mixed $type = null): void {
         if (is_null($type)) {
             $type = match (true) {
                 is_int($value) => PDO::PARAM_INT,
@@ -74,34 +84,30 @@ class Database {
     /**
      * Recupère le resultat en array
      *
-     * @return mixed
+     * @return array|false
      */
-    public function resultSet() {
-        $this->execute();
-        return $this->stmt->fetchAll(PDO::FETCH_OBJ);
-    }
-
-    /**
-     * Execute une requête sql
-     *
-     * @return mixed
-     */
-    public function execute() {
-        return $this->stmt->execute();
+    final public function resultSet(array $args = []): array|false {
+        $this->execute($args);
+        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
      * Recupère une seule entrée et la return en objet
      *
+     * @param array $args
      * @return mixed
      */
-    public function single() {
-        $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_OBJ);
+    final public function single(array $args = []): mixed {
+        $this->execute($args);
+        return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Get row count
-    public function rowCount() {
+    /**
+     * Compte le nombre de row dans une colonne
+     *
+     * @return int
+     */
+    final public function rowCount(): int {
         return $this->stmt->rowCount();
     }
 }
