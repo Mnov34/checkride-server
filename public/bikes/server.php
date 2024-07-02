@@ -1,5 +1,11 @@
 <?php
+session_start();
 include 'config.php';
+
+// Vérifier si un jeton CSRF est défini pour la session, sinon en générer un nouveau
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 // Fonction pour ajouter une nouvelle moto
 function addMotorcycle($brand, $model, $cylinder, $prod_year, $plate): void
@@ -15,51 +21,13 @@ function addMotorcycle($brand, $model, $cylinder, $prod_year, $plate): void
     }
 }
 
-// Fonction pour mettre à jour une moto existante
-function updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate): void
-{
-    global $conn;
-    try {
-        $stmt = $conn->prepare("UPDATE motorcycle SET brand=?, model=?, cylinder=?, prod_year=?, plate=? WHERE Id_motorcycle=?");
-        $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate, $id]);
-        header('Location: bikestest.php?success=Motorcycle updated successfully.');
-        exit();
-    } catch (Exception $e) {
-        die("Error updating motorcycle: " . $e->getMessage());
-    }
-}
-
-// Fonction pour supprimer une moto
-function deleteMotorcycle($id): void
-{
-    global $conn;
-    try {
-        $stmt = $conn->prepare("DELETE FROM motorcycle WHERE Id_motorcycle=?");
-        $stmt->execute([$id]);
-        header('Location: bikestest.php?success=Motorcycle deleted successfully.');
-        exit();
-    } catch (Exception $e) {
-        die("Error deleting motorcycle: " . $e->getMessage());
-    }
-}
-
-// Fonction pour récupérer les données d'une moto pour l'édition
-function editMotorcycle($id): void
-{
-    global $conn;
-    try {
-        $stmt = $conn->prepare("SELECT * FROM motorcycle WHERE Id_motorcycle=?");
-        $stmt->execute([$id]);
-        $motorcycle = $stmt->fetch(PDO::FETCH_ASSOC);
-        header('Location: accueil.php?edit=' . urlencode(json_encode($motorcycle)));
-        exit();
-    } catch (Exception $e) {
-        die("Error fetching motorcycle: " . $e->getMessage());
-    }
-}
-
 // Gérer la requête POST en fonction de l'action
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Vérifier le jeton CSRF avant de traiter la requête
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        die('CSRF token mismatch');
+    }
+
     $action = $_POST['action'];
     $id = $_POST['id'] ?? null;
     $brand = $_POST['motorcycle_brand'] ?? null;
@@ -94,3 +62,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         editMotorcycle($id);
     }
 }
+?>

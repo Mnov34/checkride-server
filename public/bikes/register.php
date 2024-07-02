@@ -1,5 +1,48 @@
 <?php
 global $conn;
+session_start();
+require('config.php');
+
+// Générer et ajouter un jeton CSRF s'il n'existe pas
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    // Vérifier le jeton CSRF
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        die('CSRF token mismatch');
+    }
+
+    $CR_user = htmlspecialchars($_POST['CR_user']);
+    $CR_password = $_POST['CR_password'];
+    $confirm_password = $_POST['confirm_password'];
+    $email = htmlspecialchars($_POST['email']);
+
+    if ($CR_password !== $confirm_password) {
+        echo "<div class='alert alert-danger'><h3>The passwords don’t match.</h3></div>";
+    } else {
+        try {
+            $conn->beginTransaction();
+            $status = 'user';
+            $hashed_password = password_hash($CR_password, PASSWORD_DEFAULT); // Utilisation de bcrypt
+
+            $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, status) VALUES (:CR_user, :CR_password, :email, :status)";
+            $stmt1 = $conn->prepare($query1);
+            $stmt1->execute([
+                ':CR_user' => $CR_user,
+                ':CR_password' => $hashed_password,
+                ':email' => $email,
+                ':status' => $status
+            ]);
+            $conn->commit();
+            echo "<div class='alert alert-success'><h3>You have successfully registered.</h3></div>";
+        } catch (PDOException $e) {
+            $conn->rollBack();
+            echo "<div class='alert alert-danger'><h3>Error while registering: " . $e->getMessage() . "</h3></div>";
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +51,7 @@ global $conn;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CheckRide</title>
     <link rel="stylesheet" href="./style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
     <script>
         function validatePassword() {
@@ -20,20 +63,15 @@ global $conn;
             }
             return true;
         }
-
-        function redirectAfterDelay() {
-            setTimeout(function() {
-                window.location.href = "register.php";
-            }, 2000);
-        }
     </script>
 </head>
-<body>
+<body class="vh-100 overflow-hidden">
 
 <div id="contacts" class="contact py-5">
     <div class="container text-white" style="background-color: #132B40; border-radius: 15px;max-width: 800px;">
         <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Inscription</h2>
         <form action="" method="post" class="form" onsubmit="return validatePassword();">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <div>
                 <label for="CR_user" class="form-label">User</label>
                 <input type="text" name="CR_user" id="CR_user" class="form-control" placeholder="User" required>
@@ -60,46 +98,7 @@ global $conn;
         <p class="text-center" style="padding-bottom: 20px">Need help, more information or just to chat? Use our form to contact us!</p>
     </div>
 </div>
-<div class="container exception" id="messageContainer">
-    <?php
-    require('config.php');
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-        $CR_user = htmlspecialchars($_POST['CR_user']);
-        $CR_password = htmlspecialchars($_POST['CR_password']);
-        $confirm_password = htmlspecialchars($_POST['confirm_password']);
-        $email = htmlspecialchars($_POST['email']);
 
-        if ($CR_password !== $confirm_password) {
-            echo "<div class='error'><h3>The passwords don’t match.</h3></div>";
-            echo "<script>redirectAfterDelay();</script>";
-        } else {
-            try {
-                $conn->beginTransaction();
-                $status = 'user';
-
-                $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, status) VALUES (:CR_user, :CR_password, :email, :status)";
-                $stmt1 = $conn->prepare($query1);
-                $stmt1->execute([
-                    ':CR_user' => $CR_user,
-                    ':CR_password' => hash('sha256', $CR_password),
-                    ':email' => $email,
-                    ':status' => $status
-                ]);
-                $id_checkride_user = $conn->lastInsertId();
-
-                $conn->commit();
-                echo "<div class='success'><h3>you have successfully registered.</h3></div>";
-                echo "<script>redirectAfterDelay();</script>";
-            } catch (PDOException $e) {
-                $conn->rollBack();
-                echo "<div class='error'><h3>Error while registering: " . $e->getMessage() . "</h3></div>";
-                echo "<script>redirectAfterDelay();</script>";
-            }
-        }
-    }
-    ?>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlHxhd5LYn3N1fV5RBbSCrL3yQ4J5pBIeFgDEBo7C7v8uSOq2u5Ixk6g4T" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cgmxk3Jd3Ks6VVR3GclMSRLTwKbs9IOVSAwtHUf3chszfue4ZmGn5w5YpRa4oz9d" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </body>
 </html>

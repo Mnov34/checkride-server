@@ -7,7 +7,7 @@ require('config.php');
 session_start();
 
 if(!isset($_SESSION["username"])) {
-    header("Location: login.php");
+    header("Location: ./bikes/login.php");
     exit();
 }
 ?>
@@ -28,31 +28,53 @@ if(!isset($_SESSION["username"])) {
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <!-- CSS  -->
     <link rel="stylesheet" href="./style.css">
+
 </head>
+<body class="vh-100 overflow-hidden">
+<!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
+    <div class="container">
+        <!--Logo-->
+        <a class="navbar-brand" href="#">CHECKRIDE</a>
+        <!--Toggle btn-->
+        <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<body>
-<?php if (isset($_GET['error'])): ?>
-    <div class="alert alert-danger" role="alert">
-        <?php echo htmlspecialchars($_GET['error']); ?>
+        <!--SideBar-->
+        <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <!--Sidebar Header-->
+            <div class="offcanvas-header text-white border-bottom shadow-none">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">CHECKRIDE</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <!--Sidebar Body-->
+            <div class="text-white offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
+                <ul class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../bikes/accueiltest.php">Home</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../bikes/bikestest.php">Bikes</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../bikes/contact.php">Contact</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
+                    </li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
+                    <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
+                </div>
+            </div>
+        </div>
     </div>
-<?php endif; ?>
-
-<?php if (isset($_GET['success'])): ?>
-    <div class="alert alert-success" role="alert">
-        <?php echo htmlspecialchars($_GET['success']); ?>
-    </div>
-<?php endif; ?>
-
-<header>
-    <nav>
-        <a href="../bikes/accueiltest.php">Home</a>
-        <a href="../bikes/bikestest.php">Bikes</a>
-        <a href="../bikes/contact.php">Contact</a>
-        <a href="../bikes/admin/add_user.php">Add user</a>
-        <a href="../bikes/admin/home.php">Admin home</a>
-        <span></span>
-    </nav>
-</header>
+</nav>
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="text-white">
@@ -60,11 +82,18 @@ if(!isset($_SESSION["username"])) {
             <br>
             Manage all your existing maintenance or add a new one.
         </div>
-        <!-- Button to trigger Add user offcanvas -->
-        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
-            <i class="fa-solid fa-user-plus fa-xs"></i>
-            Add new maintenance
-        </button>
+        <div>
+            <!-- Button to trigger Add user offcanvas -->
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+                <i class="fa-solid fa-user-plus fa-xs"></i>
+                Add new maintenance
+            </button>
+            <!-- Button to export to CSV -->
+            <button class="btn btn-primary" type="button" id="exportCsvBtn">
+                <i class="fa-solid fa-file-csv fa-xs"></i>
+                Export to CSV
+            </button>
+        </div>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
@@ -288,8 +317,43 @@ if(!isset($_SESSION["username"])) {
 
 <!-- Add this script tag before the closing </body> tag in index.php -->
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', (event) => {
         $('#myTable').DataTable();
+
+        function downloadCSV(csv, filename) {
+            let csvFile;
+            let downloadLink;
+
+            csvFile = new Blob([csv], {type: "text/csv"});
+
+            downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+
+        function exportTableToCSV(filename) {
+            let csv = [];
+            let rows = document.querySelectorAll("table tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (let j = 0; j < cols.length; j++)
+                    row.push(cols[j].innerText);
+
+                csv.push(row.join(","));
+            }
+
+            downloadCSV(csv.join("\n"), filename);
+        }
+
+        document.getElementById('exportCsvBtn').addEventListener('click', function () {
+            exportTableToCSV('maintenance_data.csv');
+        });
 
         <?php if(isset($_GET['edit'])): ?>
         let motorcycle = <?php echo json_encode(json_decode($_GET['edit'], true)); ?>;
@@ -306,12 +370,6 @@ if(!isset($_SESSION["username"])) {
     });
 </script>
 
-<!-- Bootstrap  -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-<!-- Jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- Datatables  -->
-<script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
 </body>
-
 </html>

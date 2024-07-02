@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
 </head>
-<body>
+<body class="vh-100 overflow-hidden">
 
 <?php
 global $conn;
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute([':username' => $username]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($result && hash('sha256', $password) == $result['CR_password']) {
+        if ($result && password_verify($password, $result['CR_password'])) {  // Modification ici pour utiliser password_verify
             $_SESSION['username'] = $username;
             $_SESSION['status'] = $result['status'];
             if ($result['status'] === 'admin') {
