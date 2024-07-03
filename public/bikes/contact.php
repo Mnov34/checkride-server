@@ -3,10 +3,13 @@ require('session_manager.php');
 require_login();
 
 global $conn;
-require('./config.php');
-session_start();
+require('config.php');
 
-if(!isset($_SESSION["username"])) {
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
     exit();
 }

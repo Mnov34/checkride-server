@@ -3,10 +3,13 @@ require('session_manager.php');
 require_login();
 
 global $conn;
-require('./config.php');
-session_start();
+require('config.php');
 
-if(!isset($_SESSION["username"])) {
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
     exit();
 }
@@ -44,8 +47,7 @@ if(!isset($_SESSION["username"])) {
 <?php endif; ?>
 
 <!--Navbar-->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);
-">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
     <div class="container">
         <!--Logo-->
         <a class="navbar-brand" href="#">CHECKRIDE</a>
@@ -95,11 +97,20 @@ if(!isset($_SESSION["username"])) {
             <br>
             Manage all your existing motorcycle or add a new one.
         </div>
-        <!-- Button to trigger Add user offcanvas -->
-        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
-            <i class="fa-solid fa-user-plus fa-xs"></i>
-            Add new motorcycle
-        </button>
+        <div>
+            <!-- Button to trigger Add user offcanvas -->
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+                <i class="fa-solid fa-user-plus fa-xs"></i>
+                Add new maintenance
+            </button>
+            <!-- Button to export to CSV -->
+            <form method="post" action="./exportBikes.php" style="display:inline-block;">
+                <button class="btn btn-primary" type="submit" name="export_csv">
+                    <i class="fa-solid fa-file-csv fa-xs"></i>
+                    Export to CSV
+                </button>
+            </form>
+        </div>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
@@ -128,10 +139,7 @@ if(!isset($_SESSION["username"])) {
                                     <td>{$motorcycle['prod_year']}</td>
                                     <td>{$motorcycle['plate']}</td>
                                     <td>
-                                        <form method='POST' action='server.php' style='display:inline-block;'>
-                                            <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
-                                            <button type='submit' name='action' value='edit' class='btn btn-primary'>Edit</button>
-                                        </form>
+                                        <button class='btn btn-primary edit-btn' data-motorcycle='" . json_encode($motorcycle) . "'>Edit</button>
                                         <form method='POST' action='server.php' style='display:inline-block;'>
                                             <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
                                             <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
@@ -144,7 +152,6 @@ if(!isset($_SESSION["username"])) {
         </table>
     </div>
 </div>
-
 
 <!-- Add Motorcycle offcanvas  -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
@@ -215,14 +222,14 @@ if(!isset($_SESSION["username"])) {
 </div>
 
 <!-- Edit Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEditUser" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Motorcycle</h5>
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <form method="POST" action="server.php" id="editForm">
-            <input type="hidden" name="id" id="id">
+            <input type="hidden" name="id" id="edit-id">
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Brand</label>
@@ -283,23 +290,22 @@ if(!isset($_SESSION["username"])) {
     </div>
 </div>
 
-<!-- Add this script tag before the closing </body> tag in index.php -->
 <script>
     $(document).ready(function() {
         $('#myTable').DataTable();
 
-        <?php if(isset($_GET['edit'])): ?>
-        let motorcycle = <?php echo json_encode(json_decode($_GET['edit'], true)); ?>;
-        if (motorcycle) {
-            $('#id').val(motorcycle.Id_motorcycle);
-            $('select[name="motorcycle_brand"]').val(motorcycle.brand);
-            $('input[name="model"]').val(motorcycle.model);
-            $('input[name="cylinder"]').val(motorcycle.cylinder);
-            $('input[name="prod_year"]').val(motorcycle.prod_year);
-            $('input[name="plate"]').val(motorcycle.plate);
-            $('#offcanvasEditUser').offcanvas('show');
-        }
-        <?php endif; ?>
+        $('.edit-btn').on('click', function() {
+            let motorcycle = $(this).data('motorcycle');
+            if (motorcycle) {
+                $('#edit-id').val(motorcycle.Id_motorcycle);
+                $('select[name="motorcycle_brand"]').val(motorcycle.brand);
+                $('input[name="model"]').val(motorcycle.model);
+                $('input[name="cylinder"]').val(motorcycle.cylinder);
+                $('input[name="prod_year"]').val(motorcycle.prod_year);
+                $('input[name="plate"]').val(motorcycle.plate);
+                $('#offcanvasEditUser').offcanvas('show');
+            }
+        });
     });
 </script>
 

@@ -4,16 +4,19 @@ require_login();
 
 global $conn;
 require('config.php');
-session_start();
 
-if(!isset($_SESSION["username"])) {
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -28,7 +31,6 @@ if(!isset($_SESSION["username"])) {
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <!-- CSS  -->
     <link rel="stylesheet" href="./style.css">
-
 </head>
 <body class="vh-100 overflow-hidden">
 <!--Navbar-->
@@ -89,10 +91,12 @@ if(!isset($_SESSION["username"])) {
                 Add new maintenance
             </button>
             <!-- Button to export to CSV -->
-            <button class="btn btn-primary" type="button" id="exportCsvBtn">
-                <i class="fa-solid fa-file-csv fa-xs"></i>
-                Export to CSV
-            </button>
+            <form method="post" action="./exportMaintenance.php" style="display:inline-block;">
+                <button class="btn btn-primary" type="submit" name="export_csv">
+                    <i class="fa-solid fa-file-csv fa-xs"></i>
+                    Export to CSV
+                </button>
+            </form>
         </div>
     </div>
     <div class="table-responsive">
@@ -146,7 +150,6 @@ if(!isset($_SESSION["username"])) {
         </table>
     </div>
 </div>
-
 
 <!-- Add Motorcycle offcanvas  -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
@@ -315,45 +318,9 @@ if(!isset($_SESSION["username"])) {
     </div>
 </div>
 
-<!-- Add this script tag before the closing </body> tag in index.php -->
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         $('#myTable').DataTable();
-
-        function downloadCSV(csv, filename) {
-            let csvFile;
-            let downloadLink;
-
-            csvFile = new Blob([csv], {type: "text/csv"});
-
-            downloadLink = document.createElement("a");
-            downloadLink.download = filename;
-            downloadLink.href = window.URL.createObjectURL(csvFile);
-            downloadLink.style.display = "none";
-
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-        }
-
-        function exportTableToCSV(filename) {
-            let csv = [];
-            let rows = document.querySelectorAll("table tr");
-
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-
-                for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
-
-                csv.push(row.join(","));
-            }
-
-            downloadCSV(csv.join("\n"), filename);
-        }
-
-        document.getElementById('exportCsvBtn').addEventListener('click', function () {
-            exportTableToCSV('maintenance_data.csv');
-        });
 
         <?php if(isset($_GET['edit'])): ?>
         let motorcycle = <?php echo json_encode(json_decode($_GET['edit'], true)); ?>;
