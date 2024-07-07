@@ -84,6 +84,7 @@ class Database {
     /**
      * Recupère le resultat en array
      *
+     * @param array $args
      * @return array|false
      */
     final public function resultSet(array $args = []): array|false {

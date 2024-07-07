@@ -1,12 +1,12 @@
 <?php
 
-namespace src\app\models;
+namespace app\models;
 
 use PDOException;
 
 class Motorcycle {
     private Database $db;
-    private int $id;
+    private int|null $id;
     private string $brand;
     private string $model;
     private string $cylinder;
@@ -14,8 +14,8 @@ class Motorcycle {
     private int $plate;
     private mixed $acquisition_date;
 
-    public function __construct(Database $conn) {
-        $this->db = $conn;
+    public function __construct() {
+        $this->db = new Database();
     }
 
     /**
@@ -109,10 +109,18 @@ class Motorcycle {
         $this->acquisition_date = $acquisition_date;
     }
 
-    final public function createMotorcycle(string $brand, string $model, string $cylinder,string $prod_year, int $plate): bool {
+    final public function createMotorcycle(Motorcycle $motorcycle): bool {
         try {
             $this->db->query("INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, Id_checkride_user) VALUES (?, ?, ?, ?, ?, 1)");
-            return $this->db->execute([$brand, $model, $cylinder, $prod_year, $plate]);
+
+            $this->setBrand($motorcycle->getBrand());
+            $this->setModel($motorcycle->getModel());
+            $this->setCylinder($motorcycle->getCylinder());
+            $this->setProdYear($motorcycle->getProdYear());
+            $this->setPlate($motorcycle->getPlate());
+
+            return $this->db->execute([$this->getBrand(), $this->getModel(), $this->getCylinder(), $this->getProdYear(),
+                                          $this->getPlate()]);
         } catch (PDOException $e) {
             throw new PDOException("Error creating new motorcycle: " . $e->getMessage());
         }
@@ -142,7 +150,7 @@ class Motorcycle {
         }
     }
 
-    final public function updateMotorcycle(int $id, string $brand, string $model, string $cylinder,string $prod_year, int $plate): bool {
+    final public function updateMotorcycle(int $id, string $brand, string $model, string $cylinder, string $prod_year, int $plate): bool {
         try {
             $this->db->query("UPDATE motorcycle SET brand=?, model=?, cylinder=?, prod_year=?, plate=? WHERE Id_motorcycle=?");
             return $this->db->execute([$brand, $model, $cylinder, $prod_year, $plate, $id]);
