@@ -1,14 +1,17 @@
 <?php
 
-namespace src\app\controllers;
-
-use core\Request;
+namespace app\controllers;
 
 class HomeController {
+    private MotorcyclesController $motorcycleModel;
 
+    final public function __construct() {
+        $this->motorcycleModel = new MotorcyclesController();
+    }
 
-    public function test(Request $request) {
-        return view('home.home');
+    final public function index(): void {
+        $motorcycles = $this->motorcycleModel->listMotorcycles();
+        require_once 'src/views/home/index.php';
     }
 
 }
