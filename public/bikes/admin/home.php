@@ -3,9 +3,9 @@ global $conn;
 require('../config.php');
 require('../session_manager.php');
 require_admin();
-
-// Initialiser la session
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Vérifiez si l'utilisateur est connecté, sinon redirigez-le vers la page de connexion
 if (!isset($_SESSION["username"])) {
@@ -49,11 +49,18 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheckRide</title>
-    <link rel="stylesheet" href="../style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Checkride</title>
     <link rel="shortcut icon" href="../../img/faviconmoto.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <!-- Font Awesome  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Datatables CSS  -->
+    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+    <!-- CSS  -->
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 <?php if (isset($_GET['error'])): ?>
@@ -68,16 +75,50 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 <?php endif; ?>
 
-<header>
-    <nav>
-        <a href="../../bikes/accueiltest.php">Home</a>
-        <a href="../../bikes/bikestest.php">Bikes</a>
-        <a href="../../bikes/contact.php">Contact</a>
-        <a href="./add_user.php">Add user</a>
-        <a href="./home.php">Admin home</a>
-        <span></span>
-    </nav>
-</header>
+<!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
+    <div class="container">
+        <!--Logo-->
+        <a class="navbar-brand" href="#">CHECKRIDE</a>
+        <!--Toggle btn-->
+        <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!--SideBar-->
+        <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <!--Sidebar Header-->
+            <div class="offcanvas-header text-white border-bottom shadow-none">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">CHECKRIDE</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <!--Sidebar Body-->
+            <div class="text-white offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
+                <ul class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../../bikes/accueiltest.php">Home</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../../bikes/bikestest.php">Bikes</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../../bikes/contact.php">Contact</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../../bikes/admin/add_user.php">Add user</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="../../bikes/admin/home.php">Admin home</a>
+                    </li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
+                    <a href="./../login.php"><img src="../../img/deconnexion.png" alt="disconnect button"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="text-white">
