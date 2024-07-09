@@ -17,9 +17,33 @@ if (!isset($_SESSION["username"])) {
 $userId = $_SESSION['user_id'];
 
 try {
-    $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME; // Assurez-vous que ces constantes sont définies dans config.php
+    $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME;
     $pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Gestion de la suppression
+    if (isset($_GET['delete'])) {
+        $id = $_GET['delete'];
+        $stmt = $pdo->prepare("DELETE FROM motorcycle WHERE Id_motorcycle = ?");
+        $stmt->execute([$id]);
+        header("Location: bikestest.php?success=Moto supprimée");
+        exit();
+    }
+
+    // Gestion de la mise à jour
+    if (isset($_POST['update'])) {
+        $id = $_POST['id'];
+        $brand = $_POST['motorcycle_brand'];
+        $model = $_POST['model'];
+        $cylinder = $_POST['cylinder'];
+        $prod_year = $_POST['prod_year'];
+        $plate = $_POST['plate'];
+
+        $stmt = $pdo->prepare("UPDATE motorcycle SET brand = ?, model = ?, cylinder = ?, prod_year = ?, plate = ? WHERE Id_motorcycle = ?");
+        $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate, $id]);
+        header("Location: bikestest.php?success=Moto mise à jour");
+        exit();
+    }
 
     $stmt = $pdo->prepare("SELECT * FROM motorcycle WHERE Id_checkride_user = ?");
     $stmt->execute([$userId]);
@@ -31,7 +55,6 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,25 +65,10 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Datatables CSS  -->
-    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <!-- CSS  -->
     <link rel="stylesheet" href="./style.css">
 </head>
-
 <body class="vh-100">
-<?php if (isset($_GET['error'])): ?>
-    <div class="alert alert-danger" role="alert">
-        <?php echo htmlspecialchars($_GET['error']); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (isset($_GET['success'])): ?>
-    <div class="alert alert-success" role="alert">
-        <?php echo htmlspecialchars($_GET['success']); ?>
-    </div>
-<?php endif; ?>
-
 <!--Navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
     <div class="container">
@@ -83,20 +91,20 @@ try {
             <div class="text-white offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
                 <ul class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3">
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/accueiltest.php">Home</a>
+                        <a class="nav-link" href="./accueiltest.php">Home</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/bikestest.php">Bikes</a>
+                        <a class="nav-link" href="./bikestest.php">Bikes</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/contact.php">Contact</a>
+                        <a class="nav-link" href="./contact.php">Contact</a>
                     </li>
                     <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
                         <li class="nav-item mx-2">
-                            <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
+                            <a class="nav-link" href="./admin/add_user.php">Add user</a>
                         </li>
                         <li class="nav-item mx-2">
-                            <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
+                            <a class="nav-link" href="./admin/home.php">Admin home</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -107,21 +115,23 @@ try {
         </div>
     </div>
 </nav>
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="text-white">
-            <span class="h5">Motorcycle</span>
+            <span class="h5">Motorcycles</span>
             <br>
-            Manage all your existing motorcycle or add a new one.
+            Manage all your existing motorcycles or add a new one.
         </div>
         <div>
-            <!-- Button to trigger Add user offcanvas -->
-            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+            <!-- Button to trigger Add motorcycle offcanvas -->
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddMotorcycle">
                 <i class="fa-solid fa-user-plus fa-xs"></i>
                 Add new motorcycle
             </button>
             <!-- Button to export to CSV -->
             <form method="post" action="./exportBikes.php" style="display:inline-block;">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                 <button class="btn btn-primary" type="submit" name="export_csv">
                     <i class="fa-solid fa-file-csv fa-xs"></i>
                     Export to CSV
@@ -130,7 +140,7 @@ try {
         </div>
     </div>
     <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
+        <table class="table table-bordered table-striped table-hover align-middle" style="width:100%;">
             <thead class="table">
             <tr class="blue">
                 <th>#</th>
@@ -155,8 +165,10 @@ try {
                         <button class='btn btn-primary edit-btn' data-motorcycle='<?= json_encode($motorcycle); ?>'>Edit</button>
                         <form method='POST' action='./server.php' style='display:inline-block;'>
                             <input type='hidden' name='csrf_token' value='<?= $_SESSION['csrf_token']; ?>'>
+                            <input type='hidden' name='entity' value='motorcycle'>
                             <input type='hidden' name='id' value='<?= $motorcycle['Id_motorcycle']; ?>'>
-                            <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
+                            <input type='hidden' name='action' value='delete'>
+                            <button type='submit' class='btn btn-danger'>Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -167,14 +179,16 @@ try {
 </div>
 
 <!-- Add Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddMotorcycle" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Add new Motorcycle</h5>
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <form method="POST" action="./server.php">
-            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="entity" value="motorcycle">
+            <input type="hidden" name="action" value="insert">
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Brand</label>
@@ -228,7 +242,7 @@ try {
             </div>
             <br>
             <div>
-                <button type="submit" class="btn btn-primary me-1" name="action" value="insert">Submit</button>
+                <button type="submit" class="btn btn-primary me-1">Submit</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
             </div>
         </form>
@@ -236,18 +250,21 @@ try {
 </div>
 
 <!-- Edit Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEditUser" style="width:600px; background-color: #132B40; color: white;">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEditMotorcycle" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Motorcycle</h5>
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <form method="POST" action="./server.php" id="editForm">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="entity" value="motorcycle">
+            <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" id="edit-id">
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Brand</label>
-                    <select name="motorcycle_brand" class="form-control">
+                    <select name="motorcycle_brand" id="edit-motorcycle_brand" class="form-control" required>
                         <option value="Aprilia">Aprilia</option>
                         <option value="Benelli">Benelli</option>
                         <option value="Beta">Beta</option>
@@ -280,24 +297,24 @@ try {
                 </div>
                 <div class="col">
                     <label class="form-label">Model</label>
-                    <input type="text" class="form-control" name="model" placeholder="Model">
+                    <input type="text" class="form-control" name="model" id="edit-model" placeholder="Model" required>
                 </div>
             </div>
             <div class="col">
                 <label class="form-label">Cylinder</label>
-                <input type="text" class="form-control" name="cylinder" placeholder="Cylinder">
+                <input type="text" class="form-control" name="cylinder" id="edit-cylinder" placeholder="Cylinder" required>
             </div>
             <div class="col">
                 <label class="form-label">Year</label>
-                <input type="date" class="form-control" name="prod_year">
+                <input type="date" class="form-control" name="prod_year" id="edit-prod_year" required>
             </div>
             <div class="col">
                 <label class="form-label">Plate</label>
-                <input type="text" class="form-control" name="plate" placeholder="AA-123-AA">
+                <input type="text" class="form-control" name="plate" id="edit-plate" placeholder="AA-123-AA" required>
             </div>
             <br>
             <div>
-                <button type="submit" class="btn btn-primary me-1" name="action" value="update">Submit</button>
+                <button type="submit" class="btn btn-primary me-1">Submit</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
             </div>
         </form>
@@ -305,30 +322,27 @@ try {
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#myTable').DataTable();
-
+    document.addEventListener('DOMContentLoaded', (event) => {
         $('.edit-btn').on('click', function() {
             let motorcycle = $(this).data('motorcycle');
-            if (motorcycle) {
-                $('#edit-id').val(motorcycle.Id_motorcycle);
-                $('select[name="motorcycle_brand"]').val(motorcycle.brand);
-                $('input[name="model"]').val(motorcycle.model);
-                $('input[name="cylinder"]').val(motorcycle.cylinder);
-                $('input[name="prod_year"]').val(motorcycle.prod_year);
-                $('input[name="plate"]').val(motorcycle.plate);
-                $('#offcanvasEditUser').offcanvas('show');
-            }
+
+            // Appliquer les données aux champs du formulaire dans le offcanvas
+            $('#edit-id').val(motorcycle.Id_motorcycle);
+            $('#edit-motorcycle_brand').val(motorcycle.brand);
+            $('#edit-model').val(motorcycle.model);
+            $('#edit-cylinder').val(motorcycle.cylinder);
+            $('#edit-prod_year').val(motorcycle.prod_year);
+            $('#edit-plate').val(motorcycle.plate);
+
+            // Afficher le offcanvas
+            let offcanvasElement = document.getElementById('offcanvasEditMotorcycle');
+            let offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            offcanvas.show();
         });
     });
 </script>
 
-<!-- Bootstrap  -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-<!-- Jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- Datatables  -->
-<script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
 </body>
-
 </html>

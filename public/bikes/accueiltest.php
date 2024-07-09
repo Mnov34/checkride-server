@@ -24,22 +24,23 @@ try {
     // Gestion de la suppression
     if (isset($_GET['delete'])) {
         $id = $_GET['delete'];
-        $stmt = $pdo->prepare("DELETE FROM checkride_user WHERE Id_checkride_user = ?");
+        $stmt = $pdo->prepare("DELETE FROM maintenance WHERE Id_maintenance = ?");
         $stmt->execute([$id]);
-        header("Location: accueiltest.php?success=Utilisateur supprimé");
+        header("Location: accueiltest.php?success=Maintenance supprimée");
         exit();
     }
 
     // Gestion de la mise à jour
     if (isset($_POST['update'])) {
-        $id = $_POST['id'];  // Assurez-vous que cet identifiant est bien passé via un champ caché dans votre formulaire
-        $cr_user = $_POST['cr_user'];
-        $email = $_POST['email'];
-        $status = $_POST['status'];
+        $id = $_POST['id'];
+        $id_motorcycle = $_POST['id_motorcycle'];
+        $maintenance_kilometer = $_POST['maintenance_kilometer'];
+        $parts = $_POST['parts'];
+        $maintenance_date = $_POST['maintenance_date'];
 
-        $stmt = $pdo->prepare("UPDATE checkride_user SET CR_user = ?, email = ?, status = ? WHERE Id_checkride_user = ?");
-        $stmt->execute([$cr_user, $email, $status, $id]);
-        header("Location: accueiltest.php?success=Utilisateur mis à jour");
+        $stmt = $pdo->prepare("UPDATE maintenance SET Id_motorcycle = ?, maintenance_kilometer = ?, parts = ?, maintenance_date = ? WHERE Id_maintenance = ?");
+        $stmt->execute([$id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date, $id]);
+        header("Location: accueiltest.php?success=Maintenance mise à jour");
         exit();
     }
 
@@ -63,8 +64,6 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Datatables CSS  -->
-    <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <!-- CSS  -->
     <link rel="stylesheet" href="./style.css">
 </head>
@@ -91,20 +90,20 @@ try {
             <div class="text-white offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
                 <ul class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3">
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/accueiltest.php">Home</a>
+                        <a class="nav-link" href="./accueiltest.php">Home</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/bikestest.php">Bikes</a>
+                        <a class="nav-link" href="./bikestest.php">Bikes</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/contact.php">Contact</a>
+                        <a class="nav-link" href="./contact.php">Contact</a>
                     </li>
                     <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
                         <li class="nav-item mx-2">
-                            <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
+                            <a class="nav-link" href="./admin/add_user.php">Add user</a>
                         </li>
                         <li class="nav-item mx-2">
-                            <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
+                            <a class="nav-link" href="./admin/home.php">Admin home</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -124,13 +123,14 @@ try {
             Manage all your existing maintenance or add a new one.
         </div>
         <div>
-            <!-- Button to trigger Add user offcanvas -->
-            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+            <!-- Button to trigger Add maintenance offcanvas -->
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddMaintenance">
                 <i class="fa-solid fa-user-plus fa-xs"></i>
                 Add new maintenance
             </button>
             <!-- Button to export to CSV -->
             <form method="post" action="./exportMaintenance.php" style="display:inline-block;">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                 <button class="btn btn-primary" type="submit" name="export_csv">
                     <i class="fa-solid fa-file-csv fa-xs"></i>
                     Export to CSV
@@ -157,7 +157,7 @@ try {
             $stmt = $conn->prepare("
                 SELECT 
                     m.Id_motorcycle, m.brand, m.model, m.plate, 
-                    mt.maintenance_kilometer, mt.parts, mt.maintenance_date
+                    mt.Id_maintenance, mt.maintenance_kilometer, mt.parts, mt.maintenance_date
                 FROM motorcycle m
                 INNER JOIN maintenance mt ON m.Id_motorcycle = mt.Id_motorcycle
                 WHERE m.Id_checkride_user = :userId
@@ -173,14 +173,14 @@ try {
                     <td>{$row['maintenance_kilometer']}</td>
                     <td>{$row['parts']}</td>
                     <td>{$row['maintenance_date']}</td>
-                     <td>
-                        <form method='POST' action='server.php' style='display:inline-block;'>
-                            <input type='hidden' name='id' value='{$row['Id_motorcycle']}'>
-                            <button type='submit' name='action' value='edit' class='btn btn-primary'>Edit</button>
-                        </form>
-                        <form method='POST' action='server.php' style='display:inline-block;'>
-                            <input type='hidden' name='id' value='{$row['Id_motorcycle']}'>
-                            <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
+                    <td>
+                        <button class='btn btn-primary edit-btn' data-maintenance='" . json_encode($row) . "'>Edit</button>
+                        <form method='POST' action='./server.php' style='display:inline-block;'>
+                            <input type='hidden' name='csrf_token' value='{$_SESSION['csrf_token']}'>
+                            <input type='hidden' name='entity' value='maintenance'>
+                            <input type='hidden' name='action' value='delete'>
+                            <input type='hidden' name='id' value='{$row['Id_maintenance']}'>
+                            <button type='submit' class='btn btn-danger'>Delete</button>
                         </form>
                     </td>
                 </tr>";
@@ -191,167 +191,67 @@ try {
     </div>
 </div>
 
-<!-- Add Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
+<!-- Add Maintenance offcanvas  -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddMaintenance" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Add new maintenance</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Add new Maintenance</h5>
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form method="POST" action="server.php">
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Brand</label>
-                    <select name="motorcycle_brand" class="form-control" required>
-                        <option value="Aprilia">Aprilia</option>
-                        <option value="Benelli">Benelli</option>
-                        <option value="Beta">Beta</option>
-                        <option value="BMW">BMW</option>
-                        <option value="Buell">Buell</option>
-                        <option value="Cagiva">Cagiva</option>
-                        <option value="Can-Am">Can-Am</option>
-                        <option value="Ducati">Ducati</option>
-                        <option value="Gas Gas">Gas Gas</option>
-                        <option value="Harley-Davidson">Harley-Davidson</option>
-                        <option value="Honda">Honda</option>
-                        <option value="Husaberg">Husaberg</option>
-                        <option value="Husqvarna">Husqvarna</option>
-                        <option value="Indian">Indian</option>
-                        <option value="Kawasaki">Kawasaki</option>
-                        <option value="KTM">KTM</option>
-                        <option value="Moto Guzzi">Moto Guzzi</option>
-                        <option value="MV Agusta">MV Agusta</option>
-                        <option value="Norton">Norton</option>
-                        <option value="Peugeot">Peugeot</option>
-                        <option value="Piaggio">Piaggio</option>
-                        <option value="Royal Enfield">Royal Enfield</option>
-                        <option value="Sherco">Sherco</option>
-                        <option value="Suzuki">Suzuki</option>
-                        <option value="Triumph">Triumph</option>
-                        <option value="Vespa">Vespa</option>
-                        <option value="Victory">Victory</option>
-                        <option value="Yamaha">Yamaha</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label class="form-label">Parts</label>
-                    <select name="maintenance_parts" class="form-control" required>
-                        <option value="Engine oil">Engine oil</option>
-                        <option value="Oil filter">Oil filter</option>
-                        <option value="Air filter">Air filter</option>
-                        <option value="Front tires">Front tires</option>
-                        <option value="Back tires">Back tires</option>
-                        <option value="Brake pads">Brake pads</option>
-                        <option value="Chain">Chain</option>
-                        <option value="Spark plug">Spark plug</option>
-                        <option value="Chain lubrication">Chain lubrication</option>
-                        <option value="Chain tension">Chain tension</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label class="form-label">Model</label>
-                    <input type="text" class="form-control" name="model" placeholder="Model" required>
-                </div>
+        <form method="POST" action="./server.php">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="entity" value="maintenance">
+            <input type="hidden" name="action" value="insert">
+            <input type="hidden" name="id_motorcycle" value="<?= $userId; ?>">
+            <div class="col">
+                <label class="form-label">Maintenance Kilometer</label>
+                <input type="number" class="form-control" name="maintenance_kilometer" placeholder="Kilometer" required>
             </div>
             <div class="col">
-                <label class="form-label">Cylinder</label>
-                <input type="text" class="form-control" name="cylinder" placeholder="Cylinder" required>
+                <label class="form-label">Parts</label>
+                <input type="text" class="form-control" name="parts" placeholder="Parts" required>
             </div>
             <div class="col">
-                <label class="form-label">Year</label>
-                <input type="date" class="form-control" name="prod_year" required>
-            </div>
-            <div class="col">
-                <label class="form-label">Plate</label>
-                <input type="text" class="form-control" name="plate" placeholder="AA-123-AA" required>
+                <label class="form-label">Maintenance Date</label>
+                <input type="date" class="form-control" name="maintenance_date" required>
             </div>
             <br>
             <div>
-                <button type="submit" class="btn btn-primary me-1" name="action" value="insert">Submit</button>
+                <button type="submit" class="btn btn-primary me-1">Submit</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Edit Motorcycle offcanvas  -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" style="width:600px; background-color: #132B40; color: white;">
+<!-- Edit Maintenance offcanvas  -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEditMaintenance" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Motorcycle</h5>
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Maintenance</h5>
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form method="POST" action="server.php" id="editForm">
-            <input type="hidden" name="id" id="id">
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Brand</label>
-                    <select name="motorcycle_brand" class="form-control" required>
-                        <option value="Aprilia">Aprilia</option>
-                        <option value="Benelli">Benelli</option>
-                        <option value="Beta">Beta</option>
-                        <option value="BMW">BMW</option>
-                        <option value="Buell">Buell</option>
-                        <option value="Cagiva">Cagiva</option>
-                        <option value="Can-Am">Can-Am</option>
-                        <option value="Ducati">Ducati</option>
-                        <option value="Gas Gas">Gas Gas</option>
-                        <option value="Harley-Davidson">Harley-Davidson</option>
-                        <option value="Honda">Honda</option>
-                        <option value="Husaberg">Husaberg</option>
-                        <option value="Husqvarna">Husqvarna</option>
-                        <option value="Indian">Indian</option>
-                        <option value="Kawasaki">Kawasaki</option>
-                        <option value="KTM">KTM</option>
-                        <option value="Moto Guzzi">Moto Guzzi</option>
-                        <option value="MV Agusta">MV Agusta</option>
-                        <option value="Norton">Norton</option>
-                        <option value="Peugeot">Peugeot</option>
-                        <option value="Piaggio">Piaggio</option>
-                        <option value="Royal Enfield">Royal Enfield</option>
-                        <option value="Sherco">Sherco</option>
-                        <option value="Suzuki">Suzuki</option>
-                        <option value="Triumph">Triumph</option>
-                        <option value="Vespa">Vespa</option>
-                        <option value="Victory">Victory</option>
-                        <option value="Yamaha">Yamaha</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label class="form-label">Parts</label>
-                    <select name="maintenance_parts" class="form-control" required>
-                        <option value="Engine oil">Engine oil</option>
-                        <option value="Oil filter">Oil filter</option>
-                        <option value="Air filter">Air filter</option>
-                        <option value="Front tires">Front tires</option>
-                        <option value="Back tires">Back tires</option>
-                        <option value="Brake pads">Brake pads</option>
-                        <option value="Chain">Chain</option>
-                        <option value="Spark plug">Spark plug</option>
-                        <option value="Chain lubrication">Chain lubrication</option>
-                        <option value="Chain tension">Chain tension</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label class="form-label">Model</label>
-                    <input type="text" class="form-control" name="model" placeholder="Model">
-                </div>
+        <form method="POST" action="./server.php" id="editForm">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="entity" value="maintenance">
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="id" id="edit-id">
+            <input type="hidden" name="id_motorcycle" id="edit-id_motorcycle">
+            <div class="col">
+                <label class="form-label">Maintenance Kilometer</label>
+                <input type="number" class="form-control" name="maintenance_kilometer" id="edit-maintenance_kilometer" placeholder="Kilometer" required>
             </div>
             <div class="col">
-                <label class="form-label">Cylinder</label>
-                <input type="text" class="form-control" name="cylinder" placeholder="Cylinder">
+                <label class="form-label">Parts</label>
+                <input type="text" class="form-control" name="parts" id="edit-parts" placeholder="Parts" required>
             </div>
             <div class="col">
-                <label class="form-label">Year</label>
-                <input type="date" class="form-control" name="prod_year">
-            </div>
-            <div class="col">
-                <label class="form-label">Plate</label>
-                <input type="text" class="form-control" name="plate" placeholder="AA-123-AA">
+                <label class="form-label">Maintenance Date</label>
+                <input type="date" class="form-control" name="maintenance_date" id="edit-maintenance_date" required>
             </div>
             <br>
             <div>
-                <button type="submit" class="btn btn-primary me-1" name="action" value="update">Submit</button>
+                <button type="submit" class="btn btn-primary me-1">Submit</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
             </div>
         </form>
@@ -360,23 +260,25 @@ try {
 
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
-        $('#myTable').DataTable();
+        $('.edit-btn').on('click', function() {
+            let maintenance = $(this).data('maintenance');
 
-        <?php if(isset($_GET['edit'])): ?>
-        let motorcycle = <?php echo json_encode(json_decode($_GET['edit'], true)); ?>;
-        if (motorcycle) {
-            $('#id').val(motorcycle.Id_motorcycle);
-            $('select[name="motorcycle_brand"]').val(motorcycle.brand);
-            $('input[name="model"]').val(motorcycle.model);
-            $('input[name="cylinder"]').val(motorcycle.cylinder);
-            $('input[name="prod_year"]').val(motorcycle.prod_year);
-            $('input[name="plate"]').val(motorcycle.plate);
-            $('#offcanvasEditUser').offcanvas('show');
-        }
-        <?php endif; ?>
+            // Appliquer les données aux champs du formulaire dans le offcanvas
+            $('#edit-id').val(maintenance.Id_maintenance);
+            $('#edit-id_motorcycle').val(maintenance.Id_motorcycle);
+            $('#edit-maintenance_kilometer').val(maintenance.maintenance_kilometer);
+            $('#edit-parts').val(maintenance.parts);
+            $('#edit-maintenance_date').val(maintenance.maintenance_date);
+
+            // Afficher le offcanvas
+            let offcanvasElement = document.getElementById('offcanvasEditMaintenance');
+            let offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            offcanvas.show();
+        });
     });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
