@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         }
     </script>
 </head>
-<body class="vh-100 overflow-hidden">
+<body class="vh-100 ">
 
 <div id="contacts" class="contact py-5">
     <div class="container text-white" style="background-color: #132B40; border-radius: 15px;max-width: 800px;">

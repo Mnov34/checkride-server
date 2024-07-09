@@ -31,7 +31,7 @@ if (!isset($_SESSION["username"])) {
     <!-- CSS  -->
     <link rel="stylesheet" href="./style.css">
 </head>
-<body class="vh-100 overflow-hidden">
+<body class="vh-100 ">
 <!--Navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
     <div class="container">

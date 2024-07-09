@@ -48,7 +48,7 @@ try {
     <link rel="stylesheet" href="./style.css">
 </head>
 
-<body class="vh-100 overflow-hidden">
+<body class="vh-100">
 <?php if (isset($_GET['error'])): ?>
     <div class="alert alert-danger" role="alert">
         <?php echo htmlspecialchars($_GET['error']); ?>

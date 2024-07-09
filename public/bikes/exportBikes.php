@@ -15,7 +15,7 @@ if (!isset($_SESSION["username"])) {
 }
 
 header('Content-Type: text/csv; charset=utf-8');
-header('Content-Disposition: attachment; filename=bikes_data.csv');
+header('Content-Disposition: attachment; filename="bikes_data.csv"');
 
 $output = fopen('php://output', 'w');
 if ($output === false) {
@@ -27,14 +27,17 @@ $delimiter = ',';
 // Headers matching the columns in bikestest.php
 fputcsv($output, ['#', 'Brand', 'Model', 'Cylinder', 'Year', 'Plate'], $delimiter);
 
+// Modifiez cette requête pour inclure une condition WHERE qui restreint les données à l'utilisateur connecté
 $sql = "
     SELECT 
         Id_motorcycle, brand, model, cylinder, prod_year, plate
     FROM motorcycle
+    WHERE user_id = :user_id
 ";
 
 try {
     $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':user_id', $_SESSION['user_id']); // Assurez-vous que 'user_id' est bien stocké dans la session
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

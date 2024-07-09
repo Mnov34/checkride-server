@@ -25,7 +25,7 @@ if (session_status() == PHP_SESSION_NONE) {
     <!-- CSS  -->
     <link rel="stylesheet" href="../style.css">
 </head>
-<body class="vh-100 overflow-hidden">
+<body class="vh-100">
 <?php
 
 
