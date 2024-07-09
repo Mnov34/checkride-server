@@ -25,7 +25,7 @@ if (session_status() == PHP_SESSION_NONE) {
     <!-- CSS  -->
     <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body class="vh-100 overflow-hidden">
 <?php
 
 
@@ -49,50 +49,52 @@ if (isset($_POST['submit'], $_POST['username'], $_POST['email'], $_POST['type'],
 } else {
 ?>
 
-<!--Navbar-->
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
-    <div class="container">
-        <!--Logo-->
-        <a class="navbar-brand" href="#">CHECKRIDE</a>
-        <!--Toggle btn-->
-        <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(19, 43, 64, 0.8);">
+        <div class="container">
+            <!--Logo-->
+            <a class="navbar-brand" href="#">CHECKRIDE</a>
+            <!--Toggle btn-->
+            <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <!--SideBar-->
-        <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-            <!--Sidebar Header-->
-            <div class="offcanvas-header text-white border-bottom shadow-none">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">CHECKRIDE</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
+            <!--SideBar-->
+            <div class="sidebar offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <!--Sidebar Header-->
+                <div class="offcanvas-header text-white border-bottom shadow-none">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">CHECKRIDE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
 
-            <!--Sidebar Body-->
-            <div class="text-white offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
-                <ul class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3">
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/accueiltest.php">Home</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/bikestest.php">Bikes</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/contact.php">Contact</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/admin/add_user.php">Add user</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/admin/home.php">Admin home</a>
-                    </li>
-                </ul>
-                <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
-                    <a href="./../login.php"><img src="../../img/deconnexion.png" alt="disconnect button"></a>
+                <!--Sidebar Body-->
+                <div class="text-white offcanvas-body d-flex flex-column flex-lg-row p-4 p-lg-0">
+                    <ul class="navbar-nav justify-content-center align-items-center fs-5 flex-grow-1 pe-3">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../../bikes/accueiltest.php">Home</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../../bikes/bikestest.php">Bikes</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../../bikes/contact.php">Contact</a>
+                        </li>
+                        <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="../../bikes/admin/add_user.php">Add user</a>
+                            </li>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="../../bikes/admin/home.php">Admin home</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                    <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
+                        <a href="../login.php"><img src="../../img/deconnexion.png" alt="disconnect button"></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
 <div class="container pt-1 mt-4" style="background-color: #132B40;border-radius: 15px;max-width: 600px; ">
     <h2 class="text-center text-white mb-1 mt-3">Add User</h2>
@@ -131,6 +133,7 @@ if (isset($_POST['submit'], $_POST['username'], $_POST['email'], $_POST['type'],
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlHxhd5LYn3N1fV5RBbSCrL3yQ4J5pBIeFgDEBo7C7v8uSOq2u5Ixk6g4T" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cgmxk3Jd3Ks6VVR3GclMSRLTwKbs9IOVSAwtHUf3chszfue4ZmGn5w5YpRa4oz9d" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
 <?php } ?>
 </body>

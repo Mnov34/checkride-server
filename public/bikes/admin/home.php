@@ -3,6 +3,7 @@ global $conn;
 require('../config.php');
 require('../session_manager.php');
 require_admin();
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -62,7 +63,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- CSS  -->
     <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body class="vh-100 overflow-hidden">
 <?php if (isset($_GET['error'])): ?>
     <div id="alert-error" class="alert alert-danger" role="alert">
         <?php echo htmlspecialchars($_GET['error']); ?>
@@ -105,15 +106,17 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="../../bikes/contact.php">Contact</a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/admin/add_user.php">Add user</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../../bikes/admin/home.php">Admin home</a>
-                    </li>
+                    <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../../bikes/admin/add_user.php">Add user</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../../bikes/admin/home.php">Admin home</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
-                    <a href="./../login.php"><img src="../../img/deconnexion.png" alt="disconnect button"></a>
+                    <a href="../login.php"><img src="../../img/deconnexion.png" alt="disconnect button"></a>
                 </div>
             </div>
         </div>
@@ -127,7 +130,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
     <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover align-middle">
+        <table class="table table-bordered table-striped table-hover align-middle" id="myTable" style="width:100%;">
             <thead class="table" style="background-color: #132B40;">
             <tr>
                 <th class="col-3">User</th>

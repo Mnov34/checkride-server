@@ -1,8 +1,8 @@
 <?php
+global $conn;
 require('session_manager.php');
 require_login();
 
-global $conn;
 require('config.php');
 
 if (session_status() == PHP_SESSION_NONE) {
@@ -12,6 +12,21 @@ if (session_status() == PHP_SESSION_NONE) {
 if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
     exit();
+}
+
+$userId = $_SESSION['user_id'];
+
+try {
+    $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME; // Assurez-vous que ces constantes sont définies dans config.php
+    $pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $stmt = $pdo->prepare("SELECT * FROM motorcycle WHERE Id_checkride_user = ?");
+    $stmt->execute([$userId]);
+    $bikes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Échec de la connexion : " . $e->getMessage();
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -76,12 +91,14 @@ if (!isset($_SESSION["username"])) {
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="../bikes/contact.php">Contact</a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
-                    </li>
+                    <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
                     <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
@@ -101,7 +118,7 @@ if (!isset($_SESSION["username"])) {
             <!-- Button to trigger Add user offcanvas -->
             <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
                 <i class="fa-solid fa-user-plus fa-xs"></i>
-                Add new maintenance
+                Add new motorcycle
             </button>
             <!-- Button to export to CSV -->
             <form method="post" action="./exportBikes.php" style="display:inline-block;">
@@ -126,28 +143,24 @@ if (!isset($_SESSION["username"])) {
             </tr>
             </thead>
             <tbody>
-            <?php
-            $stmt = $conn->prepare("SELECT * FROM motorcycle");
-            $stmt->execute();
-            $motorcycles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($motorcycles as $motorcycle) {
-                echo "<tr>
-                                    <td>{$motorcycle['Id_motorcycle']}</td>
-                                    <td>{$motorcycle['brand']}</td>
-                                    <td>{$motorcycle['model']}</td>
-                                    <td>{$motorcycle['cylinder']}</td>
-                                    <td>{$motorcycle['prod_year']}</td>
-                                    <td>{$motorcycle['plate']}</td>
-                                    <td>
-                                        <button class='btn btn-primary edit-btn' data-motorcycle='" . json_encode($motorcycle) . "'>Edit</button>
-                                        <form method='POST' action='server.php' style='display:inline-block;'>
-                                            <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
-                                            <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
-                                        </form>
-                                    </td>
-                                  </tr>";
-            }
-            ?>
+            <?php foreach ($bikes as $motorcycle): ?>
+                <tr>
+                    <td><?= $motorcycle['Id_motorcycle']; ?></td>
+                    <td><?= $motorcycle['brand']; ?></td>
+                    <td><?= $motorcycle['model']; ?></td>
+                    <td><?= $motorcycle['cylinder']; ?></td>
+                    <td><?= $motorcycle['prod_year']; ?></td>
+                    <td><?= $motorcycle['plate']; ?></td>
+                    <td>
+                        <button class='btn btn-primary edit-btn' data-motorcycle='<?= json_encode($motorcycle); ?>'>Edit</button>
+                        <form method='POST' action='./server.php' style='display:inline-block;'>
+                            <input type='hidden' name='csrf_token' value='<?= $_SESSION['csrf_token']; ?>'>
+                            <input type='hidden' name='id' value='<?= $motorcycle['Id_motorcycle']; ?>'>
+                            <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
             </tbody>
         </table>
     </div>
@@ -160,7 +173,8 @@ if (!isset($_SESSION["username"])) {
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form method="POST" action="server.php">
+        <form method="POST" action="./server.php">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Brand</label>
@@ -228,7 +242,7 @@ if (!isset($_SESSION["username"])) {
         <button type="button" class="text-white btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form method="POST" action="server.php" id="editForm">
+        <form method="POST" action="./server.php" id="editForm">
             <input type="hidden" name="id" id="edit-id">
             <div class="row mb-3">
                 <div class="col">

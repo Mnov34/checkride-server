@@ -62,12 +62,14 @@ if (!isset($_SESSION["username"])) {
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="../bikes/contact.php">Contact</a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
-                    </li>
+                    <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
                     <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>

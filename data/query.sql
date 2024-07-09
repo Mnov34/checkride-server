@@ -1,22 +1,18 @@
-INSERT INTO checkride_user (CR_user, CR_password, email, status) VALUES
-     ('Bouyou34','jesuisnulalol','bouyou34@gmail.com','admin'),
-     ('Shifterpro','jesuisfortalol','shifterpro@gmail.com','admin'),
-     ('user1', 'pass1', 'user1@gmail.com', 'user'),
-     ('user2', 'pass2', 'user2@gmail.com', 'user'),
-     ('user3', 'pass3', 'user3@gmail.com', 'user'),
-     ('user4', 'pass4', 'user4@gmail.com', 'user');
+/* Création des user / admin via le site directement */
+
+/* Jeu de donée pour le projet checkride*/
 
 INSERT INTO motorcycle (brand, model, cylinder, prod_year, plate, acquisition_date, Id_checkride_user) VALUES
-    ('Honda', 'CBR500R', '500cc', '2019-01-01', 'DG-451-XE', '2020-01-15', 3),
-    ('Yamaha', 'MT-07', '689cc', '2018-03-01', 'MF-882-GT', '2020-02-20', 4),
-    ('Kawasaki', 'Z650', '649cc', '2020-05-01', 'KP-203-RT', '2020-06-30', 5),
-    ('Suzuki', 'GSX-S750', '749cc', '2019-07-01', 'XJ-908-CR', '2020-08-15', 6),
+    ('Honda', 'CBR500R', '500cc', '2019-01-01', 'DG-451-XE', '2020-01-15', 1),
+    ('Yamaha', 'MT-07', '689cc', '2018-03-01', 'MF-882-GT', '2020-02-20', 1),
+    ('Kawasaki', 'Z650', '649cc', '2020-05-01', 'KP-203-RT', '2020-06-30', 2),
+    ('Suzuki', 'GSX-S750', '749cc', '2019-07-01', 'XJ-908-CR', '2020-08-15', 2),
     ('BMW', 'R1250GS', '1254cc', '2021-01-01', 'LB-567-MQ', '2021-03-01', 3),
-    ('Ducati', 'Monster 821', '821cc', '2020-02-01', 'OZ-314-PL', '2021-04-20', 4),
-    ('Triumph', 'Street Triple', '765cc', '2020-11-01', 'EQ-426-VB', '2021-05-30', 5),
-    ('Aprilia', 'RS 660', '659cc', '2021-06-01', 'UT-759-HD', '2021-07-15', 6),
-    ('Moto Guzzi', 'V85 TT', '853cc', '2019-08-01', 'AJ-672-FS', '2021-09-01', 3),
-    ('Harley Davidson', 'Iron 883', '883cc', '2018-04-01', 'VC-185-KY', '2021-10-20', 4);
+    ('Ducati', 'Monster 821', '821cc', '2020-02-01', 'OZ-314-PL', '2021-04-20', 3),
+    ('Triumph', 'Street Triple', '765cc', '2020-11-01', 'EQ-426-VB', '2021-05-30', 4),
+    ('Aprilia', 'RS 660', '659cc', '2021-06-01', 'UT-759-HD', '2021-07-15', 4),
+    ('Moto Guzzi', 'V85 TT', '853cc', '2019-08-01', 'AJ-672-FS', '2021-09-01', 5),
+    ('Harley Davidson', 'Iron 883', '883cc', '2018-04-01', 'VC-185-KY', '2021-10-20', 5);
 
 INSERT INTO maintenance (maintenance_kilometer, parts, bills, maintenance_date, Id_motorcycle)
 VALUES
@@ -152,3 +148,10 @@ INSERT INTO kilometers (date_kilometer, kilometer, Id_motorcycle) VALUES
       ('2024-04-28', 9500, 6),
       ('2024-05-30', 10000, 6);
 
+
+/* modification à faire pour la suppréssion des utilisateurs */
+
+ALTER TABLE motorcycle
+    DROP FOREIGN KEY motorcycle_ibfk_1;
+ALTER TABLE motorcycle
+    ADD CONSTRAINT motorcycle_ibfk_1 FOREIGN KEY (Id_checkride_user) REFERENCES checkride_user (Id_checkride_user) ON DELETE CASCADE;

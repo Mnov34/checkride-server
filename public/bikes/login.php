@@ -11,42 +11,48 @@
 <body class="vh-100 overflow-hidden">
 
 <?php
-global $conn;
-require('config.php');
 session_start();
+require('config.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = htmlspecialchars($_POST['username']);
-    $password = htmlspecialchars($_POST['password']);
+// Générer un jeton CSRF si nécessaire
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
     try {
-        $query = "SELECT * FROM `checkride_user` WHERE CR_user = :username";
-        $stmt = $conn->prepare($query);
-        $stmt->execute([':username' => $username]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $pdo = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME, DB_USERNAME, DB_PASSWORD);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        if ($result && password_verify($password, $result['CR_password'])) {  // Modification ici pour utiliser password_verify
+        $stmt = $pdo->prepare("SELECT Id_checkride_user, CR_password, status FROM checkride_user WHERE CR_user = ?");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['CR_password'])) {
             $_SESSION['username'] = $username;
-            $_SESSION['status'] = $result['status'];
-            if ($result['status'] === 'admin') {
-                header("Location: admin/add_user.php");
-            } else {
-                header("Location: accueiltest.php");
-            }
+            $_SESSION['user_id'] = $user['Id_checkride_user'];
+            $_SESSION['role'] = $user['status'];  // Stocker le statut de l'utilisateur
+            header("Location: accueiltest.php");
             exit();
         } else {
-            $message = "Le nom d'utilisateur ou le mot de passe est incorrect.";
+            echo "Nom d'utilisateur ou mot de passe incorrect";
         }
     } catch (PDOException $e) {
-        $message = "Erreur : " . $e->getMessage();
+        echo "Échec de la connexion : " . $e->getMessage();
     }
 }
 ?>
+
+
 
 <div id="contacts" class="contact py-5 ">
     <div class="container text-white" style="background-color: #132B40; border-radius: 15px; max-width: 370px;">
         <h2 class="section__tittle text-center text-white" style="padding-top: 20px">Bienvenue</h2>
         <form action="" method="post" class="form">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
             <div>
                 <label for="floatingInput" class="form-label">Utilisateur Checkride</label>
                 <input type="text" name="username" id="floatingInput" class="form-control" placeholder="Utilisateur Checkride" style="max-width: 350px;" required>

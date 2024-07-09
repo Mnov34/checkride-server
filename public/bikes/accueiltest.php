@@ -1,8 +1,8 @@
 <?php
+global $conn;
 require('session_manager.php');
 require_login();
 
-global $conn;
 require('config.php');
 
 if (session_status() == PHP_SESSION_NONE) {
@@ -13,8 +13,44 @@ if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
     exit();
 }
-?>
 
+$userId = $_SESSION['user_id'];
+
+try {
+    $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME;
+    $pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Gestion de la suppression
+    if (isset($_GET['delete'])) {
+        $id = $_GET['delete'];
+        $stmt = $pdo->prepare("DELETE FROM checkride_user WHERE Id_checkride_user = ?");
+        $stmt->execute([$id]);
+        header("Location: accueiltest.php?success=Utilisateur supprimé");
+        exit();
+    }
+
+    // Gestion de la mise à jour
+    if (isset($_POST['update'])) {
+        $id = $_POST['id'];  // Assurez-vous que cet identifiant est bien passé via un champ caché dans votre formulaire
+        $cr_user = $_POST['cr_user'];
+        $email = $_POST['email'];
+        $status = $_POST['status'];
+
+        $stmt = $pdo->prepare("UPDATE checkride_user SET CR_user = ?, email = ?, status = ? WHERE Id_checkride_user = ?");
+        $stmt->execute([$cr_user, $email, $status, $id]);
+        header("Location: accueiltest.php?success=Utilisateur mis à jour");
+        exit();
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM checkride_user WHERE Id_checkride_user = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Échec de la connexion : " . $e->getMessage();
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,12 +99,14 @@ if (!isset($_SESSION["username"])) {
                     <li class="nav-item mx-2">
                         <a class="nav-link" href="../bikes/contact.php">Contact</a>
                     </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
-                    </li>
-                    <li class="nav-item mx-2">
-                        <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
-                    </li>
+                    <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin"): ?>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../bikes/admin/add_user.php">Add user</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="../bikes/admin/home.php">Admin home</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
                     <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
@@ -77,6 +115,7 @@ if (!isset($_SESSION["username"])) {
         </div>
     </div>
 </nav>
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="text-white">
@@ -121,8 +160,9 @@ if (!isset($_SESSION["username"])) {
                     mt.maintenance_kilometer, mt.parts, mt.maintenance_date
                 FROM motorcycle m
                 INNER JOIN maintenance mt ON m.Id_motorcycle = mt.Id_motorcycle
+                WHERE m.Id_checkride_user = :userId
             ");
-            $stmt->execute();
+            $stmt->execute([':userId' => $userId]);
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($data as $row) {
                 echo "<tr>
@@ -133,7 +173,7 @@ if (!isset($_SESSION["username"])) {
                     <td>{$row['maintenance_kilometer']}</td>
                     <td>{$row['parts']}</td>
                     <td>{$row['maintenance_date']}</td>
-                    <td>
+                     <td>
                         <form method='POST' action='server.php' style='display:inline-block;'>
                             <input type='hidden' name='id' value='{$row['Id_motorcycle']}'>
                             <button type='submit' name='action' value='edit' class='btn btn-primary'>Edit</button>
