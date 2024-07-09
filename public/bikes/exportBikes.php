@@ -32,7 +32,7 @@ $sql = "
     SELECT 
         Id_motorcycle, brand, model, cylinder, prod_year, plate
     FROM motorcycle
-    WHERE user_id = :user_id
+    WHERE Id_checkride_user = :user_id
 ";
 
 try {

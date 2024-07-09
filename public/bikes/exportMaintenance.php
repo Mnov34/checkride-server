@@ -33,7 +33,7 @@ $sql = "
         mt.maintenance_kilometer, mt.parts, mt.maintenance_date
     FROM motorcycle m
     INNER JOIN maintenance mt ON m.Id_motorcycle = mt.Id_motorcycle
-    WHERE m.user_id = :user_id  // Supposons que la table motorcycle a une colonne user_id
+    WHERE m.Id_checkride_user = :user_id  
 ";
 
 $stmt = $conn->prepare($sql);

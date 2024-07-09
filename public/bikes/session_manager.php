@@ -6,7 +6,7 @@ function is_logged_in() {
 }
 
 function is_admin() {
-    return isset($_SESSION['status']) && $_SESSION['status'] === 'admin';
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 }
 
 function require_login() {
@@ -22,4 +22,3 @@ function require_admin() {
         exit();
     }
 }
-?>
