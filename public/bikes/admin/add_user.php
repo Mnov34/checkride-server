@@ -3,8 +3,15 @@ global $conn;
 require('../config.php');
 require('../session_manager.php');
 require_admin();
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
+}
+
+// Vérifiez si l'utilisateur est connecté, sinon redirigez-le vers la page de connexion
+if (!isset($_SESSION["username"])) {
+    header("Location: login.php");
+    exit();
 }
 ?>
 

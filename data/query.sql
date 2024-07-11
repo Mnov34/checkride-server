@@ -152,6 +152,6 @@ INSERT INTO kilometers (date_kilometer, kilometer, Id_motorcycle) VALUES
 /* modification à faire pour la suppréssion des utilisateurs */
 
 ALTER TABLE motorcycle
-    DROP FOREIGN KEY motorcycle_ibfk_1;
+    DROP FOREIGN KEY motorcyle_ibfk_1;
 ALTER TABLE motorcycle
     ADD CONSTRAINT motorcycle_ibfk_1 FOREIGN KEY (Id_checkride_user) REFERENCES checkride_user (Id_checkride_user) ON DELETE CASCADE;
