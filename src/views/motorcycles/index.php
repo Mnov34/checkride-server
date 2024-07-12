@@ -22,7 +22,7 @@ global $conn;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkride</title>
-    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="/public/assets/img/faviconmoto.png" type="image/png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
@@ -30,7 +30,7 @@ global $conn;
     <!-- Datatables CSS  -->
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <!-- CSS  -->
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/public/assets/css/style.css">
 </head>
 
 <body class="vh-100 overflow-hidden">
@@ -58,12 +58,10 @@ global $conn;
             Manage all your existing motorcycle or add a new one.
         </div>
         <div>
-            <!-- Button to trigger Add user offcanvas -->
             <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
                 <i class="fa-solid fa-user-plus fa-xs"></i>
                 Add new maintenance
             </button>
-            <!-- Button to export to CSV -->
             <form method="post" action="./exportBikes.php" style="display:inline-block;">
                 <button class="btn btn-primary" type="submit" name="export_csv">
                     <i class="fa-solid fa-file-csv fa-xs"></i>
@@ -99,8 +97,8 @@ global $conn;
                                     <td>{$motorcycle['prod_year']}</td>
                                     <td>{$motorcycle['plate']}</td>
                                     <td>
-                                        <button class='btn btn-primary edit-btn' data-motorcycle='" . json_encode($motorcycle) . "'>Edit</button>
-                                        <form method='POST' action='server.php' style='display:inline-block;'>
+                                        <button class='btn btn-primary edit-btn' data-bs-motorcycle='" . json_encode($motorcycle) . "' type='button' data-bs-toggle='offcanvas' data-bs-target='#offcanvasEditUser'>Edit</button>
+                                        <form method='POST' action='/maintenance/delete' style='display:inline-block;'>
                                             <input type='hidden' name='id' value='{$motorcycle['Id_motorcycle']}'>
                                             <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>
                                         </form>

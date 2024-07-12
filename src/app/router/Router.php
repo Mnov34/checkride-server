@@ -3,6 +3,7 @@
 namespace app\router;
 
 use app\controllers\HomeController;
+use app\controllers\MaintenanceController;
 use app\controllers\MotorcyclesController;
 use app\controllers\ContactController;
 use app\controllers\AdminController;
@@ -11,15 +12,15 @@ class Router {
 
     final public function route(string $requestUri): void {
         if (preg_match('/^\/public\/([^\s?]*)/', $requestUri, $matches)) {
-            header("Location: /{$matches[1]}", true, 302);
+            header("Location: /$matches[1]", true, 302);
             exit();
         }
 
         switch ($requestUri) {
             case '/':
             case '/index.php':
-                require_once 'src/app/controllers/HomeController.php';
-                $controller = new HomeController();
+                require_once 'src/app/controllers/MaintenanceController.php';
+                $controller = new MaintenanceController();
                 $controller->index();
                 break;
 
@@ -45,6 +46,25 @@ class Router {
                 require_once 'src/app/controllers/AdminController.php';
                 $controller = new AdminController();
                 $controller->index();
+                break;
+
+
+            case '/maintenance/add':
+                require_once 'src/app/controllers/MaintenanceController.php';
+                $controller = new MaintenanceController();
+                $controller->add();
+                break;
+
+            case '/maintenance/edit':
+                require_once 'src/app/controllers/MaintenanceController.php';
+                $controller = new MaintenanceController();
+                $controller->update();
+                break;
+
+            case '/export/maintenance':
+                //require_once 'src/app/controllers/ExportController.php';
+                //$controller = new ExportController();
+                //$controller->export();
                 break;
 
             default:

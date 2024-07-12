@@ -111,4 +111,32 @@ class Database {
     final public function rowCount(): int {
         return $this->stmt->rowCount();
     }
+
+    /**
+     * @return false|string
+     */
+    final public function getLastInserted(): false|string {
+        return $this->conn->lastInsertId();
+    }
+
+    /**
+     * @return bool
+     */
+    final public function beginTransaction(): bool {
+        return $this->conn->beginTransaction();
+    }
+
+    /**
+     * @return bool
+     */
+    final public function commit(): bool {
+        return $this->conn->commit();
+    }
+
+    /**
+     * @return bool
+     */
+    final public function rollBack(): bool {
+        return $this->conn->rollBack();
+    }
 }

@@ -43,7 +43,7 @@
                     </li>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
-                    <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
+                    <a href="/login.php"><img src="/public/assets/img/deconnexion.png" alt="disconnect button"></a>
                 </div>
             </div>
         </div>
