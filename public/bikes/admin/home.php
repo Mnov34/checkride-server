@@ -53,7 +53,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkride</title>
-    <link rel="shortcut icon" href="../../img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
@@ -116,7 +116,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
-                    <a href="../login.php"><img src="../../img/deconnexion.png" alt="disconnect button"></a>
+                    <a href="../login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
                 </div>
             </div>
         </div>

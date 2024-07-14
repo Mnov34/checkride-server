@@ -1,8 +1,13 @@
 <?php
+
+//définition des constantes de connexion
+
 define('DB_SERVER', 'localhost');
 define('DB_NAME', 'checkride');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
+
+// gestions des tentatves de connexion
 
 try {
     $conn = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME, DB_USERNAME, DB_PASSWORD);

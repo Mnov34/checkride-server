@@ -1,13 +1,21 @@
 <?php
+// connexion à la bdd
+
 global $conn;
+require('config.php');
+
+// gestion des sessions
+
 require('session_manager.php');
 require_login();
 
-require('config.php');
+// demarrage des sessions
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
+// redirection si utlisateurs pas connecté
 
 if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
@@ -15,6 +23,8 @@ if (!isset($_SESSION["username"])) {
 }
 
 $userId = $_SESSION['user_id'];
+
+// gestion du CRUD et des erreurs lier au CRUD grace au try-catch
 
 try {
     $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME;
@@ -60,7 +70,7 @@ try {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkride</title>
-    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="img/faviconmoto.png" type="image/png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
@@ -109,7 +119,7 @@ try {
                     <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
-                    <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
+                    <a href="./login.php"><img src="img/deconnexion.png" alt="disconnect button"></a>
                 </div>
             </div>
         </div>
@@ -124,12 +134,12 @@ try {
             Manage all your existing motorcycles or add a new one.
         </div>
         <div>
-            <!-- Button to trigger Add motorcycle offcanvas -->
+            <!-- Button Add motorcycle offcanvas -->
             <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddMotorcycle">
                 <i class="fa-solid fa-user-plus fa-xs"></i>
                 Add new motorcycle
             </button>
-            <!-- Button to export to CSV -->
+            <!-- Button export to CSV -->
             <form method="post" action="./exportBikes.php" style="display:inline-block;">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                 <button class="btn btn-primary" type="submit" name="export_csv">
@@ -178,7 +188,7 @@ try {
     </div>
 </div>
 
-<!-- Add Motorcycle offcanvas  -->
+<!-- Add Motorcycle offcanvas (hidden slidebar)-->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddMotorcycle" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Add new Motorcycle</h5>
@@ -249,7 +259,7 @@ try {
     </div>
 </div>
 
-<!-- Edit Motorcycle offcanvas  -->
+<!-- Edit Motorcycle offcanvas (hidden slidebar)-->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasEditMotorcycle" style="width:600px; background-color: #132B40; color: white;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Motorcycle</h5>
@@ -326,7 +336,7 @@ try {
         $('.edit-btn').on('click', function() {
             let motorcycle = $(this).data('motorcycle');
 
-            // Appliquer les données aux champs du formulaire dans le offcanvas
+            // Applique les données aux champs du formulaire dans le offcanvas
             $('#edit-id').val(motorcycle.Id_motorcycle);
             $('#edit-motorcycle_brand').val(motorcycle.brand);
             $('#edit-model').val(motorcycle.model);
@@ -334,7 +344,7 @@ try {
             $('#edit-prod_year').val(motorcycle.prod_year);
             $('#edit-plate').val(motorcycle.plate);
 
-            // Afficher le offcanvas
+            // Affiche le offcanvas
             let offcanvasElement = document.getElementById('offcanvasEditMotorcycle');
             let offcanvas = new bootstrap.Offcanvas(offcanvasElement);
             offcanvas.show();

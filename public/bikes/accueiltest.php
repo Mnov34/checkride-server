@@ -1,13 +1,21 @@
 <?php
+// connexion à la bdd
+
 global $conn;
+require('config.php');
+
+// gestion des sessions
+
 require('session_manager.php');
 require_login();
 
-require('config.php');
+// demarrage des sessions
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
+// redirection si utlisateurs pas connecté
 
 if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
@@ -15,6 +23,8 @@ if (!isset($_SESSION["username"])) {
 }
 
 $userId = $_SESSION['user_id'];
+
+// gestion du CRUD et des erreurs lier au CRUD grace au try-catch
 
 try {
     $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME;
@@ -59,7 +69,7 @@ try {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkride</title>
-    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="img/faviconmoto.png" type="image/png">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <!-- Font Awesome  -->
@@ -108,7 +118,7 @@ try {
                     <?php endif; ?>
                 </ul>
                 <div class="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3">
-                    <a href="./login.php"><img src="../img/deconnexion.png" alt="disconnect button"></a>
+                    <a href="./login.php"><img src="img/deconnexion.png" alt="disconnect button"></a>
                 </div>
             </div>
         </div>

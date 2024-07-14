@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     <title>CheckRide</title>
     <link rel="stylesheet" href="./style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="../img/faviconmoto.png" type="image/png">
+    <link rel="shortcut icon" href="img/faviconmoto.png" type="image/png">
     <script>
         function validatePassword() {
             var password = document.getElementsByName("CR_password")[0].value;
