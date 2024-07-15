@@ -1,5 +1,6 @@
 part of 'home_bloc.dart';
 
+/// s'occupe de tracker l'event de fetch de moto
 sealed class HomeEvent extends Equatable {
   const HomeEvent();
 

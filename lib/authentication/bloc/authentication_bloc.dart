@@ -8,6 +8,9 @@ import 'package:user_repository/user_repository.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
+/// S'occupe de manager les états d'authentification de l'application
+/// qui sont alors utilisés pour déterminer
+/// si l'utilisateur arrive en premier sur le login ou l'accueil
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
@@ -18,6 +21,9 @@ class AuthenticationBloc
         super(const AuthenticationState.unknown()) {
     on<_AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
+
+    /// Le bloc se connecte au stream de status de AuthenticationRepository
+    /// et ajoute un event AuthenticationStatusChanged en réponse a un nouvel event
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
       (status) => add(_AuthenticationStatusChanged(status)),
     );
@@ -28,12 +34,15 @@ class AuthenticationBloc
   late StreamSubscription<AuthenticationStatus>
       _authenticationStatusSubscription;
 
+  /// Ferme la connection au stream de [AuthenticationRepository.status]
   @override
   Future<void> close() {
     _authenticationStatusSubscription.cancel();
     return super.close();
   }
 
+  /// Methode asynchrone qui gère les changements d'états de [AuthenticationStatus]
+  /// et met a jour l'état de l'application en conséquence
   Future<void> _onAuthenticationStatusChanged(
       _AuthenticationStatusChanged event,
       Emitter<AuthenticationState> emit) async {
@@ -52,11 +61,13 @@ class AuthenticationBloc
     }
   }
 
+  /// Méthode pour se déconnecter
   void _onAuthenticationLogoutRequested(
       AuthenticationLogoutRequested event, Emitter<AuthenticationState> emit) {
     _authenticationRepository.logOut();
   }
 
+  /// Méthode asynchrone qui récupère l'utilisateur actuel
   Future<User?> _tryGetUser() async {
     try {
       final user = await _userRepository.getUser();
@@ -66,37 +77,3 @@ class AuthenticationBloc
     }
   }
 }
-
-/*
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'authentication_event.dart';
-import 'authentication_state.dart';
-
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginState.empty()) {
-    on<LoginUsernameChanged>(_onUsernameChanged);
-    on<LoginPasswordChanged>(_onPasswordChanged);
-    on<LoginSubmitted>(_onSubmitted);
-  }
-
-  void _onUsernameChanged(LoginUsernameChanged event, Emitter<LoginState> emit) {
-    emit(state.copyWith(username: event.username));
-  }
-
-  void _onPasswordChanged(LoginPasswordChanged event, Emitter<LoginState> emit) {
-    emit(state.copyWith(password: event.password));
-  }
-
-  void _onSubmitted(LoginSubmitted event, Emitter<LoginState> emit) {
-    emit(state.copyWith(isSubmitting: true));
-
-    // Add your authentication logic here
-
-    // On success
-    // emit(state.copyWith(isSubmitting: false, isSuccess: true));
-
-    // On failure
-    // emit(state.copyWith(isSubmitting: false, isFailure: true));
-  }
-}
-*/

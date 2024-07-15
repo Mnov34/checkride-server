@@ -2,22 +2,25 @@ part of 'home_bloc.dart';
 
 enum HomeStatus { initial, success, failure }
 
+/// S'occupe de gérer le status de la page du bloc home avec [HomeStatus]
 final class HomeState extends Equatable {
   const HomeState({
     this.status = HomeStatus.initial,
-    this.bikes = const <Bikes>[],
+    this.bikes = const <Bike>[],
     this.hasReachedMax = false,
     this.search = const Search.pure(),
   });
 
   final HomeStatus status;
-  final List<Bikes> bikes;
+  final List<Bike> bikes;
   final bool hasReachedMax;
   final Search search;
 
+  /// Permet de copier un [HomeState] et donne la possibilité de changer
+  /// les données du [HomeState]
   HomeState copyWith({
     HomeStatus? status,
-    List<Bikes>? bikes,
+    List<Bike>? bikes,
     bool? hasReachedMax,
     Search? search,
   }) {

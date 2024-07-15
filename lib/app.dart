@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:user_repository/user_repository.dart';
 
+/// Initialise les repository et fournis les blocs nécessaires a l'application
 class App extends StatefulWidget {
   const App({super.key});
 
@@ -47,6 +48,7 @@ class _AppState extends State<App> {
   }
 }
 
+/// Construit l'interface utilisateur de l'application
 class AppView extends StatefulWidget {
   const AppView({super.key});
 

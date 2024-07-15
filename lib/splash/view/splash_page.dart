@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Page qui s'affiche automatiquement lors du démarage de l'application,
+/// pendant ce temps l'application détermine si l'utilisateur est connecté ou pas <br>
+/// L'application renvoie alors vers le bloc Home ou Login (cette logique est dans [app.AppView])
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 

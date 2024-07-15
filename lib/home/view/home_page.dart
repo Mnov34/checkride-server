@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
+/// Crée et rempli (populate) la table de motos
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -51,6 +52,8 @@ class HomePage extends StatelessWidget {
                     ),
                   ]),
                   _SearchInput(),
+                  // TODO: add the second list to have both model and brand fetch
+                  //_SearchInput(),
                   const HomeList(),
                 ],
               ),
@@ -62,6 +65,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
+/// Forme de recherche de motos
 class _SearchInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

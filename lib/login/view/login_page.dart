@@ -3,6 +3,7 @@ import 'package:checkride_mobile/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Responsable d'exposer la [Route] mais aussi de créer et fournir le [LoginBloc] à la [LoginForm]
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -13,16 +14,19 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.all(0),
-            child: BlocProvider(
-              create: (context) {
-                return LoginBloc(
-                  authenticationRepository:
-                      RepositoryProvider.of<AuthenticationRepository>(context),
-                );
-              },
-              child: const LoginForm(),
-            )));
+      body: Padding(
+        padding: const EdgeInsets.all(0),
+        child: BlocProvider(
+          create: (context) {
+            return LoginBloc(
+              authenticationRepository:
+                  /// Trouve l'instance de AuthenticationRepository grace au buildContext
+                  RepositoryProvider.of<AuthenticationRepository>(context),
+            );
+          },
+          child: const LoginForm(),
+        ),
+      ),
+    );
   }
 }

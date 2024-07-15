@@ -1,5 +1,6 @@
 part of 'authentication_bloc.dart';
 
+/// Utilisé comme output du bloc ([AuthenticationBloc]) puis est utilisé par la couche de présentation
 class AuthenticationState extends Equatable {
   const AuthenticationState._({
     this.status = AuthenticationStatus.unknown,
@@ -17,6 +18,9 @@ class AuthenticationState extends Equatable {
   final AuthenticationStatus status;
   final User user;
 
+  /// Override (Cela veux dire en quelque sorte "remplace") la méthode get de Equatable
+  /// Sert a faire une comparaison d'égalité simple car les comparaisons ne sont pas si simple en
+  /// flutter vanilla
   @override
   List<Object> get props => [status, user];
 }

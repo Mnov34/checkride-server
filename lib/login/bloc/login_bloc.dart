@@ -7,6 +7,7 @@ import 'package:formz/formz.dart';
 part 'login_event.dart';
 part 'login_state.dart';
 
+/// Responsable de traiter les données et les intéractions utilisateurs éffectués par [LoginForm]
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
     required AuthenticationRepository authenticationRepository,
@@ -19,6 +20,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   final AuthenticationRepository _authenticationRepository;
 
+  /// Lorsque the formulaire de [Username] est modifié, fais une validations des données
+  /// rentrées tout en ajoutant le nouveau username au [status]
   void _onUsernameChanged(
       LoginUsernameChanged event, Emitter<LoginState> emit) {
     final username = Username.dirty(event.username);
@@ -30,6 +33,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
   }
 
+  /// Lorsque the formulaire de [Password] est modifié, fais une validations des données
+  /// rentrées tout en ajoutant le nouveau username au [status]
   void _onPasswordChanged(
       LoginPasswordChanged event, Emitter<LoginState> emit) {
     final password = Password.dirty(event.password);
@@ -41,6 +46,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
   }
 
+  /// Lorsque l'event du bouton submit du formulaire est validé,
+  /// le bloc appelle [AuthenticationRepository.logIn] et met a jour le [status]
+  /// basé sur le retour de la requête
   Future<void> _onSubmitted(
       LoginSubmitted event, Emitter<LoginState> emit) async {
     if (state.isValid) {

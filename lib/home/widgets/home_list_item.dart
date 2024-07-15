@@ -4,7 +4,7 @@ import 'package:checkride_mobile/home/home.dart';
 class HomeListItem extends StatelessWidget {
   const HomeListItem({required this.bike, super.key});
 
-  final Bikes bike;
+  final Bike bike;
 
   @override
   Widget build(BuildContext context) {
