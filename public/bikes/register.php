@@ -1,49 +1,70 @@
 <?php
+// Déclaration de la variable globale de connexion à la base de données
 global $conn;
+
+// Démarrage de la session pour utiliser les variables de session
 session_start();
+
+// Inclusion du fichier de configuration pour la connexion à la base de données
 require('config.php');
 
-// Générer et ajouter un jeton CSRF s'il n'existe pas
+// Générer et ajouter un jeton CSRF s'il n'existe pas déjà
 if (empty($_SESSION['csrf_token'])) {
+    // Génération d'un jeton CSRF aléatoire de 32 octets
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
+// Vérification si la méthode de requête est POST et si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    // Vérifier le jeton CSRF
+    // Vérifier la validité du jeton CSRF pour éviter les attaques CSRF
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        // Arrêter l'exécution du script si le jeton CSRF ne correspond pas
         die('CSRF token mismatch');
     }
 
+    // Récupérer et sécuriser les données envoyées par le formulaire
     $CR_user = htmlspecialchars($_POST['CR_user']);
     $CR_password = $_POST['CR_password'];
     $confirm_password = $_POST['confirm_password'];
     $email = htmlspecialchars($_POST['email']);
 
+    // Vérifier si les mots de passe correspondent
     if ($CR_password !== $confirm_password) {
+        // Afficher un message d'erreur si les mots de passe ne correspondent pas
         echo "<div class='alert alert-danger'><h3>The passwords don’t match.</h3></div>";
     } else {
         try {
+            // Commencer une transaction pour assurer l'intégrité des données
             $conn->beginTransaction();
+            // Définir le statut par défaut de l'utilisateur comme 'user'
             $status = 'user';
-            $hashed_password = password_hash($CR_password, PASSWORD_DEFAULT); // Utilisation de bcrypt
+            // Hacher le mot de passe utilisateur avec l'algorithme bcrypt
+            $hashed_password = password_hash($CR_password, PASSWORD_DEFAULT);
 
+            // Préparer la requête SQL d'insertion pour enregistrer le nouvel utilisateur
             $query1 = "INSERT INTO checkride_user (CR_user, CR_password, email, status) VALUES (:CR_user, :CR_password, :email, :status)";
             $stmt1 = $conn->prepare($query1);
+            // Exécuter la requête avec les données sécurisées
             $stmt1->execute([
                 ':CR_user' => $CR_user,
                 ':CR_password' => $hashed_password,
                 ':email' => $email,
                 ':status' => $status
             ]);
+            // Valider la transaction
             $conn->commit();
+            // Afficher un message de succès à l'utilisateur
             echo "<div class='alert alert-success'><h3>You have successfully registered.</h3></div>";
         } catch (PDOException $e) {
+            // Annuler la transaction en cas d'erreur
             $conn->rollBack();
+            // Afficher un message d'erreur à l'utilisateur
             echo "<div class='alert alert-danger'><h3>Error while registering: " . $e->getMessage() . "</h3></div>";
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

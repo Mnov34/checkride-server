@@ -1,47 +1,43 @@
 <?php
-// connexion à la bdd
-
+// Inclusion des fichiers de configuration et de gestion des sessions
 global $conn;
-require('config.php');
+require('config.php'); // Fichier de configuration pour la base de données
 
-// gestion des sessions
+require('session_manager.php'); // Fichier de gestion des sessions
+require_login(); // Fonction pour exiger la connexion de l'utilisateur
 
-require('session_manager.php');
-require_login();
-
-// demarrage des sessions
-
+// Démarrage de la session si elle n'est pas déjà démarrée
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// redirection si utlisateurs pas connecté
-
+// Redirection vers la page de connexion si l'utilisateur n'est pas connecté
 if (!isset($_SESSION["username"])) {
     header("Location: ./bikes/login.php");
-    exit();
+    exit(); // Arrêter l'exécution du script après la redirection
 }
 
+// Récupération de l'identifiant utilisateur depuis la session
 $userId = $_SESSION['user_id'];
 
-// gestion du CRUD et des erreurs lier au CRUD grace au try-catch
-
 try {
+    // Connexion à la base de données en utilisant PDO
     $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME;
     $pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Activer les exceptions pour les erreurs PDO
 
-    // Gestion de la suppression
+    // Gestion de la suppression d'une moto
     if (isset($_GET['delete'])) {
-        $id = $_GET['delete'];
+        $id = $_GET['delete']; // Récupérer l'identifiant de la moto à supprimer
         $stmt = $pdo->prepare("DELETE FROM motorcycle WHERE Id_motorcycle = ?");
-        $stmt->execute([$id]);
-        header("Location: bikestest.php?success=Moto supprimée");
+        $stmt->execute([$id]); // Exécuter la requête de suppression
+        header("Location: bikestest.php?success=Moto supprimée"); // Rediriger avec un message de succès
         exit();
     }
 
-    // Gestion de la mise à jour
+    // Gestion de la mise à jour d'une moto
     if (isset($_POST['update'])) {
+        // Récupérer les données du formulaire de mise à jour
         $id = $_POST['id'];
         $brand = $_POST['motorcycle_brand'];
         $model = $_POST['model'];
@@ -49,20 +45,25 @@ try {
         $prod_year = $_POST['prod_year'];
         $plate = $_POST['plate'];
 
+        // Préparer et exécuter la requête de mise à jour
         $stmt = $pdo->prepare("UPDATE motorcycle SET brand = ?, model = ?, cylinder = ?, prod_year = ?, plate = ? WHERE Id_motorcycle = ?");
         $stmt->execute([$brand, $model, $cylinder, $prod_year, $plate, $id]);
-        header("Location: bikestest.php?success=Moto mise à jour");
+        header("Location: bikestest.php?success=Moto mise à jour"); // Rediriger avec un message de succès
         exit();
     }
 
+    // Sélectionner toutes les motos associées à l'utilisateur connecté
     $stmt = $pdo->prepare("SELECT * FROM motorcycle WHERE Id_checkride_user = ?");
-    $stmt->execute([$userId]);
-    $bikes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute([$userId]); // Exécuter la requête avec l'identifiant utilisateur
+    $bikes = $stmt->fetchAll(PDO::FETCH_ASSOC); // Récupérer toutes les lignes de résultats
+
 } catch (PDOException $e) {
+    // Gérer les erreurs de connexion à la base de données
     echo "Échec de la connexion : " . $e->getMessage();
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

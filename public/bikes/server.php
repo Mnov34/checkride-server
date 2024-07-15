@@ -1,22 +1,26 @@
 <?php
+// Démarrer une session pour utiliser les variables de session
 session_start();
+// Inclure le fichier de configuration pour la connexion à la base de données
 include 'config.php';
 
-// Générer un nouveau jeton CSRF s'il n'est pas défini
+// Générer un nouveau jeton CSRF s'il n'est pas déjà défini dans la session
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 // Vérifier le jeton CSRF sur une requête POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Vérifier le jeton CSRF
+    // Vérifier si le jeton CSRF est valide
     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         die('Incompatibilité de jeton CSRF');
     }
 
+    // Récupérer les données de l'entité et de l'action de la requête POST
     $entity = $_POST['entity'] ?? '';
     $action = $_POST['action'] ?? '';
 
+    // Appeler la fonction appropriée en fonction de l'entité
     switch ($entity) {
         case 'motorcycle':
             handleMotorcycleAction($action);
@@ -30,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+// Gérer les actions pour l'entité 'motorcycle'
 function handleMotorcycleAction($action) {
     global $conn;
     switch ($action) {
@@ -39,6 +44,7 @@ function handleMotorcycleAction($action) {
             $cylinder = $_POST['cylinder'] ?? '';
             $prod_year = $_POST['prod_year'] ?? '';
             $plate = $_POST['plate'] ?? '';
+            // Vérifier si tous les champs requis sont présents
             if ($brand && $model && $cylinder && $prod_year && $plate) {
                 addMotorcycle($brand, $model, $cylinder, $prod_year, $plate);
             } else {
@@ -52,6 +58,7 @@ function handleMotorcycleAction($action) {
             $cylinder = $_POST['cylinder'] ?? '';
             $prod_year = $_POST['prod_year'] ?? '';
             $plate = $_POST['plate'] ?? '';
+            // Vérifier si tous les champs requis sont présents pour la mise à jour
             if ($id && $brand && $model && $cylinder && $prod_year && $plate) {
                 updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate);
             } else {
@@ -60,6 +67,7 @@ function handleMotorcycleAction($action) {
             break;
         case 'delete':
             $id = $_POST['id'] ?? null;
+            // Vérifier si l'ID de la moto est fourni pour la suppression
             if ($id) {
                 deleteMotorcycle($id);
             } else {
@@ -72,6 +80,7 @@ function handleMotorcycleAction($action) {
     }
 }
 
+// Gérer les actions pour l'entité 'maintenance'
 function handleMaintenanceAction($action) {
     global $conn;
     switch ($action) {
@@ -80,6 +89,7 @@ function handleMaintenanceAction($action) {
             $maintenance_kilometer = $_POST['maintenance_kilometer'] ?? '';
             $parts = $_POST['parts'] ?? '';
             $maintenance_date = $_POST['maintenance_date'] ?? '';
+            // Vérifier si tous les champs requis sont présents
             if ($id_motorcycle && $maintenance_kilometer && $parts && $maintenance_date) {
                 addMaintenance($id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date);
             } else {
@@ -92,6 +102,7 @@ function handleMaintenanceAction($action) {
             $maintenance_kilometer = $_POST['maintenance_kilometer'] ?? '';
             $parts = $_POST['parts'] ?? '';
             $maintenance_date = $_POST['maintenance_date'] ?? '';
+            // Vérifier si tous les champs requis sont présents pour la mise à jour
             if ($id && $id_motorcycle && $maintenance_kilometer && $parts && $maintenance_date) {
                 updateMaintenance($id, $id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date);
             } else {
@@ -100,6 +111,7 @@ function handleMaintenanceAction($action) {
             break;
         case 'delete':
             $id = $_POST['id'] ?? null;
+            // Vérifier si l'ID de la maintenance est fourni pour la suppression
             if ($id) {
                 deleteMaintenance($id);
             } else {
@@ -112,7 +124,7 @@ function handleMaintenanceAction($action) {
     }
 }
 
-// Fonctions pour ajouter, mettre à jour et supprimer une moto
+// Ajouter une nouvelle moto dans la base de données
 function addMotorcycle($brand, $model, $cylinder, $prod_year, $plate): void {
     global $conn;
     $userId = $_SESSION['user_id'];
@@ -126,6 +138,7 @@ function addMotorcycle($brand, $model, $cylinder, $prod_year, $plate): void {
     }
 }
 
+// Mettre à jour une moto existante dans la base de données
 function updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate): void {
     global $conn;
     try {
@@ -138,6 +151,7 @@ function updateMotorcycle($id, $brand, $model, $cylinder, $prod_year, $plate): v
     }
 }
 
+// Supprimer une moto de la base de données
 function deleteMotorcycle($id): void {
     global $conn;
     try {
@@ -150,7 +164,7 @@ function deleteMotorcycle($id): void {
     }
 }
 
-// Fonctions pour ajouter, mettre à jour et supprimer une maintenance
+// Ajouter une nouvelle maintenance dans la base de données
 function addMaintenance($id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date): void {
     global $conn;
     try {
@@ -163,6 +177,7 @@ function addMaintenance($id_motorcycle, $maintenance_kilometer, $parts, $mainten
     }
 }
 
+// Mettre à jour une maintenance existante dans la base de données
 function updateMaintenance($id, $id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date): void {
     global $conn;
     try {
@@ -175,6 +190,7 @@ function updateMaintenance($id, $id_motorcycle, $maintenance_kilometer, $parts, 
     }
 }
 
+// Supprimer une maintenance de la base de données
 function deleteMaintenance($id): void {
     global $conn;
     try {
@@ -186,3 +202,4 @@ function deleteMaintenance($id): void {
         die("Erreur lors de la suppression de la maintenance : " . $e->getMessage());
     }
 }
+?>

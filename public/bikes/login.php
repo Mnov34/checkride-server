@@ -11,42 +11,57 @@
 <body class="vh-100">
 
 <?php
+// Démarrer une nouvelle session ou reprendre une session existante
 session_start();
+
+// Inclure le fichier de configuration pour accéder aux constantes de configuration (DB_SERVER, DB_NAME, DB_USERNAME, DB_PASSWORD)
 require('config.php');
 
-// Générer un jeton CSRF si nécessaire
+// Générer un jeton CSRF (Cross-Site Request Forgery) si nécessaire
 if (empty($_SESSION['csrf_token'])) {
+    // Si aucun jeton CSRF n'existe dans la session, en créer un nouveau
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
+// Vérifier si la requête est une requête POST (par exemple, soumission d'un formulaire)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Récupérer le nom d'utilisateur et le mot de passe soumis via le formulaire
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     try {
+        // Créer une nouvelle connexion PDO à la base de données en utilisant les constantes de configuration
         $pdo = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME, DB_USERNAME, DB_PASSWORD);
+        // Définir le mode d'erreur PDO pour lancer des exceptions
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        // Préparer une requête SQL pour sélectionner l'utilisateur correspondant au nom d'utilisateur fourni
         $stmt = $pdo->prepare("SELECT Id_checkride_user, CR_password, status FROM checkride_user WHERE CR_user = ?");
+        // Exécuter la requête avec le nom d'utilisateur comme paramètre
         $stmt->execute([$username]);
+        // Récupérer l'utilisateur comme tableau associatif
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        // Vérifier si l'utilisateur existe et si le mot de passe fourni correspond au mot de passe stocké (haché)
         if ($user && password_verify($password, $user['CR_password'])) {
+            // Si la vérification est réussie, stocker les informations de l'utilisateur dans la session
             $_SESSION['username'] = $username;
             $_SESSION['user_id'] = $user['Id_checkride_user'];
-            $_SESSION['role'] = $user['status'];  // Stocker le statut de l'utilisateur
+            $_SESSION['role'] = $user['status'];  // Stocker le statut de l'utilisateur dans la session
+
+            // Rediriger l'utilisateur vers la page d'accueil
             header("Location: accueiltest.php");
             exit();
         } else {
+            // Si le nom d'utilisateur ou le mot de passe est incorrect, afficher un message d'erreur
             echo "Nom d'utilisateur ou mot de passe incorrect";
         }
     } catch (PDOException $e) {
+        // En cas d'erreur de connexion à la base de données, afficher un message d'erreur
         echo "Échec de la connexion : " . $e->getMessage();
     }
 }
 ?>
-
-
 
 <div id="contacts" class="contact py-5 ">
     <div class="container text-white" style="background-color: #132B40; border-radius: 15px; max-width: 370px;">

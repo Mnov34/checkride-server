@@ -1,67 +1,71 @@
 <?php
-// connexion à la bdd
+// Connexion à la base de données
 
-global $conn;
-require('config.php');
+global $conn; // Déclaration de la variable globale de connexion
+require('config.php'); // Inclusion du fichier de configuration contenant les informations de connexion à la base de données
 
-// gestion des sessions
+// Gestion des sessions
 
-require('session_manager.php');
-require_login();
+require('session_manager.php'); // Inclusion du gestionnaire de session
+require_login(); // Vérification que l'utilisateur est connecté
 
-// demarrage des sessions
+// Démarrage des sessions
 
 if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+    session_start(); // Démarrage de la session si aucune session n'est déjà démarrée
 }
 
-// redirection si utlisateurs pas connecté
+// Redirection si utilisateur non connecté
 
 if (!isset($_SESSION["username"])) {
-    header("Location: ./bikes/login.php");
+    header("Location: ./bikes/login.php"); // Redirection vers la page de connexion si l'utilisateur n'est pas connecté
     exit();
 }
 
-$userId = $_SESSION['user_id'];
+$userId = $_SESSION['user_id']; // Récupération de l'ID de l'utilisateur connecté depuis la session
 
-// gestion du CRUD et des erreurs lier au CRUD grace au try-catch
+// Gestion du CRUD (Create, Read, Update, Delete) et des erreurs liées au CRUD grâce au try-catch
 
 try {
+    // Configuration de la connexion PDO à la base de données
     $dsn = 'mysql:host=' . DB_SERVER . ';dbname=' . DB_NAME;
     $pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Configuration du mode d'erreur PDO pour utiliser les exceptions
 
     // Gestion de la suppression
     if (isset($_GET['delete'])) {
-        $id = $_GET['delete'];
+        $id = $_GET['delete']; // Récupération de l'ID de la maintenance à supprimer
         $stmt = $pdo->prepare("DELETE FROM maintenance WHERE Id_maintenance = ?");
-        $stmt->execute([$id]);
-        header("Location: accueiltest.php?success=Maintenance supprimée");
+        $stmt->execute([$id]); // Exécution de la requête de suppression
+        header("Location: accueiltest.php?success=Maintenance supprimée"); // Redirection après suppression avec un message de succès
         exit();
     }
 
     // Gestion de la mise à jour
     if (isset($_POST['update'])) {
-        $id = $_POST['id'];
+        $id = $_POST['id']; // Récupération des données du formulaire de mise à jour
         $id_motorcycle = $_POST['id_motorcycle'];
         $maintenance_kilometer = $_POST['maintenance_kilometer'];
         $parts = $_POST['parts'];
         $maintenance_date = $_POST['maintenance_date'];
 
         $stmt = $pdo->prepare("UPDATE maintenance SET Id_motorcycle = ?, maintenance_kilometer = ?, parts = ?, maintenance_date = ? WHERE Id_maintenance = ?");
-        $stmt->execute([$id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date, $id]);
-        header("Location: accueiltest.php?success=Maintenance mise à jour");
+        $stmt->execute([$id_motorcycle, $maintenance_kilometer, $parts, $maintenance_date, $id]); // Exécution de la requête de mise à jour
+        header("Location: accueiltest.php?success=Maintenance mise à jour"); // Redirection après mise à jour avec un message de succès
         exit();
     }
 
+    // Récupération des informations de l'utilisateur connecté
     $stmt = $pdo->prepare("SELECT * FROM checkride_user WHERE Id_checkride_user = ?");
     $stmt->execute([$userId]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC); // Récupération des données de l'utilisateur sous forme de tableau associatif
 } catch (PDOException $e) {
+    // Gestion des erreurs de connexion à la base de données
     echo "Échec de la connexion : " . $e->getMessage();
-    exit;
+    exit; // Arrêt du script en cas d'erreur
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
