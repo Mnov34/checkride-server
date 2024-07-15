@@ -19,7 +19,8 @@ class Motorcycle {
     }
 
     /**
-     * @return mixed
+     * get the current object id
+     * @return int
      */
     final public function getId(): int {
         return $this->id;
@@ -48,13 +49,14 @@ class Motorcycle {
 
     /**
      * @param mixed $model
+     * @return void
      */
     final public function setModel(string $model): void {
         $this->model = $model;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     final public function getCylinder(): string {
         return $this->cylinder;
@@ -62,6 +64,7 @@ class Motorcycle {
 
     /**
      * @param mixed $cylinder
+     * @return void
      */
     final public function setCylinder(string $cylinder): void {
         $this->cylinder = $cylinder;

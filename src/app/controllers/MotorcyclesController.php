@@ -14,6 +14,7 @@ class MotorcyclesController {
     }
 
     final public function index(): void {
+        $motorcycles = $this->motorcycleModel->getAllMotorcycles();
         include 'src/views/motorcycles/index.php';
     }
 
@@ -49,12 +50,12 @@ class MotorcyclesController {
     final public function update(int $id, string $brand, string $model, string $cylinder, string $prod_year, int $plate): void {
         $bike = $this->motorcycleModel->getMotorcycle($id);
         $this->motorcycleModel->updateMotorcycle($bike, $model, $brand, $cylinder, $prod_year, $plate);
-        include '../views/updateBike.php';
+        include '/src/app/views/updateBike.php';
     }
 
     final public function delete(int $id): void {
         $this->motorcycleModel->deleteMotocycle($id);
-        include '../views/deleteBike.php';
+        include './src/app/views/deleteBike.php';
     }
 
     private function validateFields(array $list): void {

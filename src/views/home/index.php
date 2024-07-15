@@ -23,17 +23,6 @@
 </head>
 
 <body>
-<?php if (isset($_GET['error'])): ?>
-    <div class="alert alert-danger" role="alert">
-        <?php echo htmlspecialchars($_GET['error']); ?>
-    </div>
-<?php endif; ?>
-
-<?php if (isset($_GET['success'])): ?>
-    <div class="alert alert-success" role="alert">
-        <?php echo htmlspecialchars($_GET['success']); ?>
-    </div>
-<?php endif; ?>
 
 <header>
     <?php include 'src/views/shared/navBar.php'; ?>
@@ -87,7 +76,10 @@
     <td>{$row['parts']}</td>
     <td>{$row['maintenance_date']}</td>
     <td>
-        <a href='/maintenance/edit?motorcycle_id={$row['Id_motorcycle']}' class='btn btn-primary' type='button' data-bs-toggle='offcanvas' data-bs-target='#offcanvasEditMotorcycle'>Edit</a>
+        <form method='POST' action='' style='display:inline-block;'>
+            <input type='hidden' name='motorcycle_id' value='{$row['Id_motorcycle']}'>
+            <button type='submit' name='action' value='edit' class='btn btn-primary' data-bs-toggle='offcanvas' data-bs-target='#offcanvasEditMotorcycle'>Edit</button>
+        </form>
         <form method='POST' action='server.php' style='display:inline-block;'>
             <input type='hidden' name='motorcycle_id' value='{$row['Id_motorcycle']}'>
             <button type='submit' name='action' value='delete' class='btn btn-danger'>Delete</button>

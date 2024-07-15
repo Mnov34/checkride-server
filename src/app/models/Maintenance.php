@@ -190,6 +190,19 @@ class Maintenance {
         }
     }
 
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    final public function getMaintenance(int $id): mixed {
+        try {
+            $this->db->query("SELECT m.*, mc.* FROM maintenance m JOIN motorcycle mc ON m.id_motorcycle = mc.Id_motorcycle WHERE m.id_motorcycle = ?");
+            return $this->db->single([$id]);
+        } catch (PDOException $e) {
+            throw new PDOException("Error finding maintenance: " . $e->getMessage());
+        }
+    }
+
     final public function getAllMaintenance(): array {
         try {
             $this->db->query("

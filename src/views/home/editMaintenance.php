@@ -1,6 +1,3 @@
-<?php
-$motorcycleId = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : null;
-?>
 
 <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasExampleLabel">Edit Motorcycle</h5>
@@ -10,7 +7,7 @@ $motorcycleId = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : null;
     <form method="POST" action="/maintenance/edit">
         <div class="row mb-3">
             <div class="col">
-                <input type="hidden" name="motorcycle_id" value="<?php echo $motorcycleId; ?>">
+                <input type="hidden" name="motorcycle_id" value="">
                 <label class="form-label">Brand
                     <select name="formBrand" class="form-control" required>
                         <option value="">-------</option>

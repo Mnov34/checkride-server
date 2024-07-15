@@ -48,10 +48,14 @@ class MaintenanceController {
         }
     }
 
+    final public function getMaintenance(int $id): bool {
+        return $this->maintenanceModel->getMaintenance($id);
+    }
+
 
     final public function update(): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $motorcycleId = isset($_POST['motorcycle_id']) ? (int)$_POST['motorcycle_id'] : null;
+            $motorcycleId = $_POST['motorcycle_id'] ?? null;
             $brand = $_POST['formBrand'] ?? null;
             $part = $_POST['formPart'] ?? null;
             $model = $_POST['formModel'] ?? null;
@@ -62,8 +66,12 @@ class MaintenanceController {
 
             try {
                 $this->validateFields([$motorcycleId, $brand, $part, $model, $cylinder, $year, $plate, $kilometers]);
+                if ($motorcycleId) {
+                    $this->maintenanceModel = $this->maintenanceModel->getMaintenance($motorcycleId);
+                } else {
+                    $this->maintenanceModel->setMotorcycleId(null);
+                }
 
-                $this->maintenanceModel->setMotorcycleId($motorcycleId);
                 $this->maintenanceModel->setBrand($brand);
                 $this->maintenanceModel->setPart($part);
                 $this->maintenanceModel->setModel($model);
